@@ -15,6 +15,10 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     private Vector2 movement;
+    void Awake()
+    {
+        Player.GetInstance(3, 25, animator);
+    }
 
     // Update is called once per frame
     void Update()
