@@ -24,7 +24,7 @@ public class EnemyAI : MonoBehaviour
         direction = player.transform.position - transform.position;
         direction.Normalize();
 
-        animator.SetFloat("targetDistance", distance);
+        /*animator.SetFloat("targetDistance", distance);*/
         if (distance < 5)
         {
 

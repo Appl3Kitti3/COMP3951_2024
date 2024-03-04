@@ -1,17 +1,21 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
-    public string Name;
+    [Header ("Stats")]
+    private string Name;
     public int Level;
     public int MaxHealth;
     protected int Health;
-
     public int Defense;
-
     public int Damage;
 
-    public GameObject player;
+    [Header("Creature Configuration")] 
+    [SerializeField]
+    private float maximumDistance;
+    private GameObject player;
     public float moveSpeed;
     public Animator animator;
 
@@ -20,6 +24,11 @@ public class Creature : MonoBehaviour
     public Color damageColor;
     private Vector2 direction;
     private SpriteRenderer rend;
+
+    private void Awake()
+    {
+        player = GameObject.FindGameObjectWithTag("Player");
+    }
 
     void InflictHitColor()
     {
@@ -43,12 +52,12 @@ public class Creature : MonoBehaviour
         Health -= (damage - Defense);
         // Mace / Melee class
         
-        Invoke("InflictHitColor", 0.3f);
+        Invoke("InflictHitColor", 0f);
         Invoke("RevertColor", 0.4f);
 
         // https://forum.unity.com/threads/changing-colors-every-couple-of-seconds.179708/
-        Invoke("InflictHitColor", 0.7f);
-        Invoke("RevertColor", 1.1f);
+        Invoke("InflictHitColor", 0.6f);
+        Invoke("RevertColor", 1f);
 
 
         // creature death 
@@ -78,7 +87,7 @@ public class Creature : MonoBehaviour
         direction.Normalize();
 
         animator.SetFloat("targetDistance", distance);
-        if (distance < 5)
+        if (distance < maximumDistance)
         {
             animator.SetFloat("speed", moveSpeed);
             // move the enemy
@@ -98,10 +107,12 @@ public class Creature : MonoBehaviour
         else if (direction.x > 0)
             transform.localScale = new Vector3(1, 1, 1);
 
-        if (distance < 2)
+/*        if (distance < 2)
         {
             Player.GetInstance().InflictDamage(Damage);
             // please add a cooldown. Enemies are too overpowered.
-        }
+        }*/
     }
+
+
 }

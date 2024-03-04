@@ -15,9 +15,15 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     private Vector2 movement;
+
+    [Header("Health")]
+    [SerializeField] private int HP;
+
+    [Header("Damage")]
+    [SerializeField] private int DMG;
     void Awake()
     {
-        Player.GetInstance(3, 25, animator);
+        Player.GetInstance(HP, DMG, animator);
     }
 
     // Update is called once per frame
@@ -43,5 +49,20 @@ public class PlayerMovement : MonoBehaviour
         rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // https://www.youtube.com/watch?v=YSzmCf_L2cE
+        if (collision.gameObject.tag != "Enemy") return;
+        Creature c = collision.gameObject.GetComponent<Creature>();
+        StartCoroutine(ImmunityFrames());
+        Player.GetInstance().InflictDamage(c.Damage, c.animator);
+        
+    }
 
+    private IEnumerator ImmunityFrames()
+    {
+        Physics2D.IgnoreLayerCollision(6, 7, true);
+        yield return new WaitForSeconds(2f);
+        Physics2D.IgnoreLayerCollision(6, 7, false);
+    }
 }

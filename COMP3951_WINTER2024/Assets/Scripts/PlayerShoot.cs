@@ -14,6 +14,7 @@ public class PlayerShoot : MonoBehaviour
     public Camera sceneCamera;
     public Animator animator;
 
+    private bool isAttacking;
     
     private GameObject[] enemies;
     // https://www.youtube.com/watch?v=77dWGDFqcps
@@ -23,7 +24,7 @@ public class PlayerShoot : MonoBehaviour
         Player.GetInstance();
         // https://stackoverflow.com/questions/49945699/unity-change-all-objects-with-a-certain-tag#:~:text=If%20you%20want%20to%20find,need%20to%20on%20each%20object.
         // https://learn.unity.com/tutorial/getcomponent#5c8a65d5edbc2a001f47d6e6
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        /*enemies = GameObject.FindGameObjectsWithTag("Enemy");*/
 
 
     }
@@ -39,10 +40,18 @@ public class PlayerShoot : MonoBehaviour
         // https://www.youtube.com/watch?v=mgjWA2mxLfI
         if (Input.GetMouseButtonDown(0))
         {
-            PerformAttack();
+            animator.SetTrigger("Primary");
+            Invoke("SetAttackTrue", 0.3f);
+            Invoke("SetAttackFalse", 0.5f);
+            /*PerformAttack();*/
         }
         else if (Input.GetMouseButtonDown(1)) // first frame prevents multiple loops
+        {
             animator.SetTrigger("Ultimate");
+            Invoke("SetAttackTrue", 0.5f);
+            Invoke("SetAttackFalse", 0.9f);
+        }
+            
     }
 
     void DestroySelf()
@@ -55,9 +64,34 @@ public class PlayerShoot : MonoBehaviour
             Invoke("DestroySelf", 3f);           
     }
 
-    private void PerformAttack()
+    private void SetAttackTrue()
+    {
+        isAttacking = true;
+    }
+
+    private void SetAttackFalse()
+    {
+        isAttacking = false;
+    }
+
+
+    // https://www.youtube.com/watch?v=ND1orPLw5EQ
+    
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag != "Enemy")
+            return;
+        if (isAttacking)
+        {
+            Creature c = collision.gameObject.GetComponent<Creature>();
+            c.InflictDamage(Player.GetInstance().Damage);
+        }
+    }
+
+    /*private void PerformAttack()
     {
         animator.SetTrigger("Primary");
+        
         
             foreach (GameObject c in enemies)
             {
@@ -69,6 +103,6 @@ public class PlayerShoot : MonoBehaviour
                 }
             }
         
-    }
+    }*/
     
 }

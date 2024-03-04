@@ -34,12 +34,18 @@ public class Player
         return _instance;
     }
 
-    public void InflictDamage(int damage)
+    public void InflictDamage(int damage, Animator animation)
     {
-        Health -= damage;
+        animation.SetTrigger("Hit");
         if (Animator.IsDestroyed())
             return;
-        Animator.SetInteger("HP", Health);
         Animator.SetTrigger("Hit");
+        Health -= damage;
+        
+        Animator.SetInteger("HP", Health);
+        
     }
+
+    
+
 }
