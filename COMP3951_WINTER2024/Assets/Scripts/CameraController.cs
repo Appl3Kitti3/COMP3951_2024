@@ -22,9 +22,13 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 temp = target.transform.position;
+        
         Transform curr = transform;
-        if (target.IsUnityNull())
+        if (!target.IsUnityNull())
+        {
+            Vector3 temp = target.transform.position;
             curr.position = new Vector3(temp.x, temp.y, curr.position.z);
+        }
+            
     }
 }

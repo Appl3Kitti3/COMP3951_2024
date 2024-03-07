@@ -45,8 +45,10 @@ public class Player
     // Get the only singleton instance of the player.
     public static Player GetInstance(int maxhp = 3, int damage = 25, Animator animator = null)
     {
-        return _instance ?? new Player(maxhp, damage, animator);
-    }
+        if (_instance.IsUnityNull()) 
+            _instance = new Player(maxhp, damage, animator);
+        return _instance;
+    }   
 
     // Inflict damage to the player.
     public void InflictDamage(int damage, Animator animation)
