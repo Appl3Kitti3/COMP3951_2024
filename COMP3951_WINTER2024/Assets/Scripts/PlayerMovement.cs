@@ -1,64 +1,95 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 
-/// Source: https://www.youtube.com/watch?v=u8tot-X_RBI --> Player Movement
-/// https://www.youtube.com/watch?v=whzomFgjT50
+/// Description:
+///     Player class is a singleton that represents the current stats of the player. (Damage, Health.)
+///         It will have a weapon class to represent its weapon and its playable class to dynamically link
+///         and switch to what class should be playing.
+/// Author: Teddy Dumam-Ag A01329707
+/// Date: March 6 2024 (Created around mid February)
+/// Sources:
+///
+///     Tutorial on 2D Top Down movement.
+///     https://www.youtube.com/watch?v=u8tot-X_RBI
+///
+///     Tutorial on 2D Top Down movement alternative.
+///     https://www.youtube.com/watch?v=whzomFgjT50
+///
+///     Tutorial on how to flip a sprite. (Line 70)
+///     https://www.youtube.com/watch?v=Cr-j7EoM8bg&t=140s
+///
+///     Tutorial on collisions
+///     https://www.youtube.com/watch?v=YSzmCf_L2cE
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Base Stats")]
+    
+    // Health points, the amount of base health points the player has.
+    // Used to instantiate the singleton. (Might be migrated into a different class)
+    [SerializeField] private int healthPoints;
+    
+    // Base damage of the player.
+    // Used to instantiate the singleton. (Might be migrated into a different class)
+    [SerializeField] private int baseDamage;
+    
+    [Header ("Controller Configuration")]
+    
+    // Move speed of the player (Used as the movement speed when the player walks)
+    [SerializeField] private float moveSpeed = 5f; // TODO: Idea, on shift hold, increase speed to 10f.
+    
+    // RigidBody component of the player game object.
+    private Rigidbody2D _rigid;
+    
+    // Animator component of the player game object.
+    private Animator _animator;
 
-    public float moveSpeed = 5f;
-    public Rigidbody2D rb;
-    public Animator animator;
-
-    private Vector2 movement;
-
-    [Header("Health")]
-    [SerializeField] private int HP;
-
-    [Header("Damage")]
-    [SerializeField] private int DMG;
+    // The current position of the player (ish).
+    private Vector2 _movement;
+    
+    // Once player game object has been instantiated.
     void Awake()
     {
-        Player.GetInstance(HP, DMG, animator);
+        _animator = gameObject.GetComponent<Animator>();
+        _rigid = gameObject.GetComponent<Rigidbody2D>();
+        Player.GetInstance(healthPoints, baseDamage, _animator);
     }
 
     // Update is called once per frame
     void Update()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        // Move logic of the player.
+        _movement.x = Input.GetAxisRaw("Horizontal");
+        _movement.y = Input.GetAxisRaw("Vertical");
 
-        animator.SetFloat("Speed", movement.sqrMagnitude);
+        _animator.SetFloat("Speed", _movement.sqrMagnitude);
     }
 
-    // Physics calculations
-
+    // Is called uncommonly in a series of frames. (Not to be confused with Update, that runs once per frame)
     void FixedUpdate()
     {
-
-        //https://www.youtube.com/watch?v=Cr-j7EoM8bg&t=140s
-        if (movement.x < 0)
+        // Flip image
+        if (_movement.x < 0)
             gameObject.transform.localScale = new Vector3(-1, 1, 1);
-        else if (movement.x > 0)
+        else if (_movement.x > 0)
             gameObject.transform.localScale = new Vector3(1, 1, 1);
-
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+        
+        // Player movement
+        _rigid.MovePosition(_rigid.position + _movement * moveSpeed * Time.deltaTime);
     }
 
+    // Called once an enemy collides with the player.
     private void OnCollisionStay2D(Collision2D collision)
     {
-        // https://www.youtube.com/watch?v=YSzmCf_L2cE
-        if (collision.gameObject.tag != "Enemy") return;
+        if (!collision.gameObject.CompareTag("Enemy")) return;
         Creature c = collision.gameObject.GetComponent<Creature>();
         StartCoroutine(ImmunityFrames());
-        Player.GetInstance().InflictDamage(c.Damage, c.animator);
+        Player.GetInstance().InflictDamage(c.damage, c.animator);
         
     }
 
+    // Allows for immunity frames. A time traversal is set.
     private IEnumerator ImmunityFrames()
     {
         Physics2D.IgnoreLayerCollision(6, 7, true);

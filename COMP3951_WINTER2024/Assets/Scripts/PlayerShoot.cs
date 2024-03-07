@@ -1,108 +1,96 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+// TODO make this into controller
 
-// make this into controller
+
+/// <summary>
+/// Description:
+///     Player class is a singleton that represents the current stats of the player. (Damage, Health.)
+///         It will have a weapon class to represent its weapon and its playable class to dynamically link
+///         and switch to what class should be playing.
+/// Author: Teddy Dumam-Ag A01329707
+/// Date: March 6 2024 (Created around February)
+/// Sources: Applied C# and OOP skills.
+///
+///     Tutorial on how to make player shoot or attack.
+///     https://www.youtube.com/watch?v=mgjWA2mxLfI
+///
+///     State process of the animation tree in Unity.
+///     https://www.youtube.com/watch?v=77dWGDFqcps
+///
+///     Detecting enemy or other game sprite collisions.
+///     https://www.youtube.com/watch?v=ND1orPLw5EQ
+/// 
+/// </summary>
 public class PlayerShoot : MonoBehaviour
 {
+    // The animator used to modify the triggers and handle the animations.
+    private Animator _animator;
 
-    // https://www.youtube.com/watch?v=mgjWA2mxLfI
-    public Camera sceneCamera;
-    public Animator animator;
-
-    private bool isAttacking;
+    // called once the player has clicked the two mouse buttons.
+    private bool _isAttacking;
     
-    private GameObject[] enemies;
-    // https://www.youtube.com/watch?v=77dWGDFqcps
-
+    // Called once the controller is instantiated.
     void Awake()
     {
         Player.GetInstance();
-        // https://stackoverflow.com/questions/49945699/unity-change-all-objects-with-a-certain-tag#:~:text=If%20you%20want%20to%20find,need%20to%20on%20each%20object.
-        // https://learn.unity.com/tutorial/getcomponent#5c8a65d5edbc2a001f47d6e6
-        /*enemies = GameObject.FindGameObjectsWithTag("Enemy");*/
-
-
+        _animator = gameObject.GetComponent<Animator>();
     }
-    void Start()
-    {
-        
 
-    }
     // Update is called once per frame
     void Update()
     {
-
-        // https://www.youtube.com/watch?v=mgjWA2mxLfI
+        // Left Button
         if (Input.GetMouseButtonDown(0))
         {
-            animator.SetTrigger("Primary");
-            Invoke("SetAttackTrue", 0.3f);
-            Invoke("SetAttackFalse", 0.5f);
-            /*PerformAttack();*/
+            _animator.SetTrigger("Primary");
+            Invoke(nameof(SetAttackTrue), 0.3f);
+            Invoke(nameof(SetAttackFalse), 0.5f);
         }
-        else if (Input.GetMouseButtonDown(1)) // first frame prevents multiple loops
+        // Right Button
+        else if (Input.GetMouseButtonDown(1))
         {
-            animator.SetTrigger("Ultimate");
-            Invoke("SetAttackTrue", 0.5f);
-            Invoke("SetAttackFalse", 0.9f);
+            _animator.SetTrigger("Ultimate");
+            Invoke(nameof(SetAttackTrue), 0.5f);
+            Invoke(nameof(SetAttackFalse), 0.9f);
         }
             
     }
 
+    // Destroys the object by itself.
     void DestroySelf()
     {
         Destroy(gameObject);
     }
+    
+    // Update once or several times in a sequence of frames. (Not updated every frame)
     void FixedUpdate()
     {
-        if (animator.GetInteger("HP") < 1)
-            Invoke("DestroySelf", 3f);           
+        // Once the health points is less than 1, kill the player. Set the death animation.
+        if (_animator.GetInteger("HP") < 1)
+            Invoke(nameof(DestroySelf), 3f);           
     }
 
+    // Set the attack boolean to true.
     private void SetAttackTrue()
     {
-        isAttacking = true;
+        _isAttacking = true;
     }
 
+    // Set the attack boolean to false.
     private void SetAttackFalse()
     {
-        isAttacking = false;
+        _isAttacking = false;
     }
-
-
-    // https://www.youtube.com/watch?v=ND1orPLw5EQ
     
+    // Collides with enemies. Player inflicts damage to the enemies.
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag != "Enemy")
+        if (!collision.gameObject.CompareTag("Enemy"))
             return;
-        if (isAttacking)
+        if (_isAttacking)
         {
             Creature c = collision.gameObject.GetComponent<Creature>();
             c.InflictDamage(Player.GetInstance().Damage);
         }
     }
-
-    /*private void PerformAttack()
-    {
-        animator.SetTrigger("Primary");
-        
-        
-            foreach (GameObject c in enemies)
-            {
-            Creature creature = c.GetComponent<Creature>();
-                float distance = Vector2.Distance(transform.position, c.transform.position);
-                if (distance < 2)
-                {
-                    creature.InflictDamage(Player.GetInstance().Damage);
-                }
-            }
-        
-    }*/
-    
 }
