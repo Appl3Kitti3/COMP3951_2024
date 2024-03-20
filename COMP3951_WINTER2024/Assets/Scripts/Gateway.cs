@@ -56,6 +56,7 @@ public class Gateway : MonoBehaviour
         Scene nextScene = SceneManager.GetSceneByName("SimpleRoom");
         
         // TODO: Future plan, move player class to the Player Game Object.
+        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("HUD"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("Player"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);
         

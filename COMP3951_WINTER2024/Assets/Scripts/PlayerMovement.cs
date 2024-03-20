@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -78,22 +79,8 @@ public class PlayerMovement : MonoBehaviour
         // Player movement
         _rigid.MovePosition(_rigid.position + _movement * moveSpeed * Time.deltaTime);
     }
+    
 
-    // Called once an enemy collides with the player.
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (!collision.gameObject.CompareTag("Enemy")) return;
-        Creature c = collision.gameObject.GetComponent<Creature>();
-        StartCoroutine(ImmunityFrames());
-        Player.GetInstance().InflictDamage(c.damage, c.animator);
-        
-    }
 
-    // Allows for immunity frames. A time traversal is set.
-    private IEnumerator ImmunityFrames()
-    {
-        Physics2D.IgnoreLayerCollision(6, 7, true);
-        yield return new WaitForSeconds(2f);
-        Physics2D.IgnoreLayerCollision(6, 7, false);
-    }
+    
 }

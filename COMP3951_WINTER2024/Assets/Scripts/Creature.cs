@@ -24,6 +24,9 @@ using UnityEngine.Serialization;
 ///
 ///     Tutorial of EnemyAI following the player.
 ///     https://www.youtube.com/watch?v=2SXa10ILJms
+///
+///     Knock back tutorial
+///     https://youtu.be/RE0aWe7ByAI
 /// </summary>
 public class Creature : MonoBehaviour
 {
@@ -74,7 +77,8 @@ public class Creature : MonoBehaviour
     // The sprite renderer of the creature. Used to manipulate its colors and have a damage
     // color effect.
     private SpriteRenderer _rend;
-    
+
+    private bool _isInflicted;
     // Called once creature is instantiated.
     private void Awake()
     {
@@ -114,6 +118,7 @@ public class Creature : MonoBehaviour
         
         
         // Double change color because the animation hits the enemy twice.
+        _isInflicted = true;
         Invoke(nameof(InflictHitColor), 0f);
         Invoke(nameof(RevertColor), 0.4f);
 // -------------------------------------------------------------------------------------------------------------------- (2)
@@ -184,5 +189,20 @@ public class Creature : MonoBehaviour
             // please add a cooldown. Enemies are too overpowered.
         }        
 */
+    }
+
+    // Ensures knock-back logic from the player.
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+        if (_isInflicted)
+        {
+            Vector3 currPos = transform.position;
+            Vector2 diff = currPos - other.transform.position;
+            transform.position = new Vector2(currPos.x + diff.x, currPos.y + diff.y);
+            _isInflicted = false;
+        }
+            
     }
 }

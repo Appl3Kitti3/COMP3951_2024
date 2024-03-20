@@ -19,9 +19,9 @@ using UnityEngine;
 ///
 ///     Detecting enemy or other game sprite collisions.
 ///     https://www.youtube.com/watch?v=ND1orPLw5EQ
-/// 
+///
 /// </summary>
-public class PlayerShoot : MonoBehaviour
+public class PlayerAttack : MonoBehaviour
 {
     // The animator used to modify the triggers and handle the animations.
     private Animator _animator;
@@ -80,17 +80,29 @@ public class PlayerShoot : MonoBehaviour
     private void SetAttackFalse()
     {
         _isAttacking = false;
-    }
     
-    // Collides with enemies. Player inflicts damage to the enemies.
-    private void OnCollisionStay2D(Collision2D collision)
+    }
+    // Player inflicts damage to the enemies when both are colliding.
+    private void OnTriggerStay2D(Collider2D other)
     {
-        if (!collision.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy"))
             return;
         if (_isAttacking)
         {
-            Creature c = collision.gameObject.GetComponent<Creature>();
+            Creature c = other.gameObject.GetComponent<Creature>();
             c.InflictDamage(Player.GetInstance().Damage);
         }
+    }
+    
+    // Enemy only attacks when the player moves
+    // Advantage to players
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.gameObject.CompareTag("Enemy"))
+            return;
+        Creature c = other.gameObject.GetComponent<Creature>();
+            
+        Player.GetInstance().InflictDamage(c.damage, c.animator);
+        StartCoroutine(Player.GetInstance().ImmunityFrames());   
     }
 }

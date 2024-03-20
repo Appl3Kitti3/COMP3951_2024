@@ -31261,7 +31261,7 @@ GameObject:
   - component: {fileID: 901239720}
   - component: {fileID: 901239719}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Blob
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31300,14 +31300,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfc49f83fa49344e886a1e9c815624f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 1
-  MaxHealth: 1
-  Defense: 15
-  Damage: 5
+  level: 1
+  maxHealth: 1
+  def: 15
+  damage: 1
   maximumDistance: 5
   moveSpeed: 5
   animator: {fileID: 901239719}
-  damageColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!58 &901239721
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -31337,12 +31336,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.06
+  m_Radius: 1.19
 --- !u!50 &901239722
 Rigidbody2D:
   serializedVersion: 4
@@ -31351,14 +31350,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901239718}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -31369,7 +31368,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &901239723
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -31452,7 +31451,7 @@ GameObject:
   - component: {fileID: 970949231}
   - component: {fileID: 970949230}
   m_Layer: 7
-  m_Name: Enemy (4)
+  m_Name: Blob
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31491,14 +31490,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfc49f83fa49344e886a1e9c815624f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 1
-  MaxHealth: 1
-  Defense: 15
-  Damage: 5
+  level: 1
+  maxHealth: 1
+  def: 15
+  damage: 1
   maximumDistance: 5
   moveSpeed: 5
   animator: {fileID: 970949230}
-  damageColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!58 &970949232
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -31528,12 +31526,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.06
+  m_Radius: 1.19
 --- !u!50 &970949233
 Rigidbody2D:
   serializedVersion: 4
@@ -31542,14 +31540,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970949229}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -31560,7 +31558,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &970949234
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -32551,7 +32549,7 @@ GameObject:
   - component: {fileID: 1677222115}
   - component: {fileID: 1677222114}
   m_Layer: 7
-  m_Name: Enemy (3)
+  m_Name: Blob
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32590,14 +32588,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfc49f83fa49344e886a1e9c815624f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 1
-  MaxHealth: 1
-  Defense: 15
-  Damage: 5
+  level: 1
+  maxHealth: 1
+  def: 15
+  damage: 1
   maximumDistance: 20
   moveSpeed: 5
   animator: {fileID: 1677222114}
-  damageColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!58 &1677222116
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -32627,12 +32624,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.06
+  m_Radius: 1.19
 --- !u!50 &1677222117
 Rigidbody2D:
   serializedVersion: 4
@@ -32641,14 +32638,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1677222113}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -32659,7 +32656,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &1677222118
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -32742,7 +32739,7 @@ GameObject:
   - component: {fileID: 2001112055}
   - component: {fileID: 2001112054}
   m_Layer: 7
-  m_Name: Enemy (2)
+  m_Name: Blob
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32781,14 +32778,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfc49f83fa49344e886a1e9c815624f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 1
-  MaxHealth: 1
-  Defense: 15
-  Damage: 5
+  level: 1
+  maxHealth: 1
+  def: 15
+  damage: 1
   maximumDistance: 5
   moveSpeed: 5
   animator: {fileID: 2001112054}
-  damageColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!58 &2001112056
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -32818,12 +32814,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.06
+  m_Radius: 1.19
 --- !u!50 &2001112057
 Rigidbody2D:
   serializedVersion: 4
@@ -32832,14 +32828,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2001112053}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -32850,7 +32846,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &2001112058
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -32933,7 +32929,7 @@ GameObject:
   - component: {fileID: 2025023012}
   - component: {fileID: 2025023011}
   m_Layer: 7
-  m_Name: Enemy (1)
+  m_Name: Blob
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32972,14 +32968,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfc49f83fa49344e886a1e9c815624f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 1
-  MaxHealth: 1
-  Defense: 15
-  Damage: 5
+  level: 1
+  maxHealth: 1
+  def: 15
+  damage: 1
   maximumDistance: 5
   moveSpeed: 5
   animator: {fileID: 2025023011}
-  damageColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!58 &2025023013
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -33009,12 +33004,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.06
+  m_Radius: 1.19
 --- !u!50 &2025023014
 Rigidbody2D:
   serializedVersion: 4
@@ -33023,14 +33018,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025023010}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -33041,7 +33036,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &2025023015
 SpriteRenderer:
   m_ObjectHideFlags: 0
