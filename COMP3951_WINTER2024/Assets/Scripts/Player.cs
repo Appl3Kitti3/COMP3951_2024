@@ -1,4 +1,3 @@
-using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -17,7 +16,13 @@ public class Player
     private int _health;
     
     // Animator object of the player gameObject that represents its animation sprite.
-    private readonly Animator _animator;
+    private Animator _animator;
+    
+    // Get animator
+    public Animator Animator
+    {
+        get { return _animator; }
+    }
     
     // Singleton object of the Player class.
     private static Player _instance;
@@ -27,7 +32,7 @@ public class Player
     public int Damage { get; set; }
     
     // Checks if an enemy has entered the immunity frame region.
-    private bool HasEnteredImmunityFramesRegion { get; set; }
+    public bool HasEnteredImmunityFramesRegion { get; set; }
 
     /// <summary>
     /// Create the player class.
@@ -47,14 +52,14 @@ public class Player
     {
         if (_instance.IsUnityNull()) 
             _instance = new Player(maxhp, damage, animator);
+        else if (_instance._animator.IsUnityNull())
+            _instance._animator = animator;
         return _instance;
     }   
 
     // Inflict damage to the player.
     public void InflictDamage(int damage, Animator animation)
     {
-        if (HasEnteredImmunityFramesRegion)
-            return;
         animation.SetTrigger("Hit");
         if (_animator.IsDestroyed())
             return;
@@ -63,13 +68,16 @@ public class Player
         _animator.SetInteger("HP", _health);
     }
     
-    // Makes the player not get damaged for a few seconds.
-    public IEnumerator ImmunityFrames()
+    // Enable Immunity Frame Region
+    public void EnableITRegions()
     {
         HasEnteredImmunityFramesRegion = true;
-        yield return new WaitForSeconds(2f);
+        
+    }
+    
+    // Disable Immunity Frame Region
+    public void DisableITRegions()
+    {
         HasEnteredImmunityFramesRegion = false;
-        
-        
     }
 }

@@ -9,7 +9,13 @@ using UnityEngine;
 /// 
 /// Author: Teddy Dumam-Ag A01329707
 /// Date: March 5 2024 (Created around February)
-/// Source: https://www.youtube.com/watch?v=GOQV688wbU0
+/// Source:
+///
+///     Camera Follow Player
+///     https://www.youtube.com/watch?v=GOQV688wbU0
+///
+///     Using mouse position
+///     https://www.youtube.com/watch?v=0jTPKz3ga4w
 /// </summary>
 public class CameraController : MonoBehaviour
 {
@@ -19,10 +25,18 @@ public class CameraController : MonoBehaviour
     // In this case it is passed as the player Game Object's transform.
     public Transform target;
 
+    // Crosshair of the game
+    public GameObject crossHair;
+    
     // Update is called once per frame
     void Update()
     {
+        // Gets a crosshair and it follows based on the mouse position
+        var currMousePos = GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
+        currMousePos.z = 0f;
+        crossHair.transform.position = currMousePos;
         
+        // Moves the camera to the player mosition.
         Transform curr = transform;
         if (!target.IsUnityNull())
         {

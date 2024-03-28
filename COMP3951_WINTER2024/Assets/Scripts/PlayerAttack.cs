@@ -1,4 +1,5 @@
 using UnityEngine;
+
 // TODO make this into controller
 
 
@@ -23,17 +24,13 @@ using UnityEngine;
 /// </summary>
 public class PlayerAttack : MonoBehaviour
 {
-    // The animator used to modify the triggers and handle the animations.
-    private Animator _animator;
-
-    // called once the player has clicked the two mouse buttons.
-    private bool _isAttacking;
+    // The attack box that's in front of the player.
+    public GameObject attackBox;
     
     // Called once the controller is instantiated.
-    void Awake()
+    private void Start()
     {
-        Player.GetInstance();
-        _animator = gameObject.GetComponent<Animator>();
+        attackBox = transform.GetChild(0).gameObject;
     }
 
     // Update is called once per frame
@@ -42,16 +39,26 @@ public class PlayerAttack : MonoBehaviour
         // Left Button
         if (Input.GetMouseButtonDown(0))
         {
-            _animator.SetTrigger("Primary");
-            Invoke(nameof(SetAttackTrue), 0.3f);
-            Invoke(nameof(SetAttackFalse), 0.5f);
+            Player.GetInstance().Animator.SetBool("Primary", true);
+            attackBox.SetActive(true);
+            
         }
         // Right Button
         else if (Input.GetMouseButtonDown(1))
         {
-            _animator.SetTrigger("Ultimate");
-            Invoke(nameof(SetAttackTrue), 0.5f);
-            Invoke(nameof(SetAttackFalse), 0.9f);
+            Player.GetInstance().Animator.SetBool("Ultimate", true);
+            // TODO: ultimateBox.SetActive(true)
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            Player.GetInstance().Animator.SetBool("Primary", false);
+            attackBox.SetActive(false);
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            Player.GetInstance().Animator.SetBool("Ultimate", false);   
+            // TODO: ultimateBox.SetActive(false)
         }
             
     }
@@ -66,43 +73,7 @@ public class PlayerAttack : MonoBehaviour
     void FixedUpdate()
     {
         // Once the health points is less than 1, kill the player. Set the death animation.
-        if (_animator.GetInteger("HP") < 1)
-            Invoke(nameof(DestroySelf), 3f);           
-    }
-
-    // Set the attack boolean to true.
-    private void SetAttackTrue()
-    {
-        _isAttacking = true;
-    }
-
-    // Set the attack boolean to false.
-    private void SetAttackFalse()
-    {
-        _isAttacking = false;
-    
-    }
-    // Player inflicts damage to the enemies when both are colliding.
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (!other.gameObject.CompareTag("Enemy"))
-            return;
-        if (_isAttacking)
-        {
-            Creature c = other.gameObject.GetComponent<Creature>();
-            c.InflictDamage(Player.GetInstance().Damage);
-        }
-    }
-    
-    // Enemy only attacks when the player moves
-    // Advantage to players
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!other.gameObject.CompareTag("Enemy"))
-            return;
-        Creature c = other.gameObject.GetComponent<Creature>();
-            
-        Player.GetInstance().InflictDamage(c.damage, c.animator);
-        StartCoroutine(Player.GetInstance().ImmunityFrames());   
+        if (Player.GetInstance().Animator.GetInteger("HP") < 1)
+            Invoke(nameof(DestroySelf), 3f);        
     }
 }

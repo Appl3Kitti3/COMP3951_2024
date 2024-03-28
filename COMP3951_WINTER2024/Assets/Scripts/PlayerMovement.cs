@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -49,21 +47,19 @@ public class PlayerMovement : MonoBehaviour
     // The current position of the player (ish).
     private Vector2 _movement;
     
-    // Once player game object has been instantiated.
-    void Awake()
+    // Called at the first frame
+    void Start()
     {
         _animator = gameObject.GetComponent<Animator>();
         _rigid = gameObject.GetComponent<Rigidbody2D>();
         Player.GetInstance(healthPoints, baseDamage, _animator);
     }
-
     // Update is called once per frame
     void Update()
     {
         // Move logic of the player.
         _movement.x = Input.GetAxisRaw("Horizontal");
         _movement.y = Input.GetAxisRaw("Vertical");
-
         _animator.SetFloat("Speed", _movement.sqrMagnitude);
     }
 
@@ -75,7 +71,6 @@ public class PlayerMovement : MonoBehaviour
             gameObject.transform.localScale = new Vector3(-1, 1, 1);
         else if (_movement.x > 0)
             gameObject.transform.localScale = new Vector3(1, 1, 1);
-        
         // Player movement
         _rigid.MovePosition(_rigid.position + _movement * moveSpeed * Time.deltaTime);
     }

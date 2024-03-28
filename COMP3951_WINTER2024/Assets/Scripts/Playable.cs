@@ -11,6 +11,8 @@
     {
         // Move speed of the player
         private int _moveSpeed;
+
+        private Weapon _w;
         
         // Returns a basic value of the move speed.
         public abstract int Move();
