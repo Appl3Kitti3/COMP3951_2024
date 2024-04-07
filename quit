@@ -1,0 +1,35 @@
+[33mcommit 33824835c9c4c04c1edf63afcc00b39a1934c4b1[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Appl3Kitti3 <tdumamag2@my.bcit.ca>
+Date:   Wed Mar 6 20:09:36 2024 -0800
+
+    Added documentation
+
+[33mcommit 222e07b0d54127f642e6b04d2ed39d5b26eaf884[m
+Author: Appl3Kitti3 <tdumamag2@my.bcit.ca>
+Date:   Sun Mar 3 19:27:42 2024 -0800
+
+    Added scene switching and the first catacomb room.
+
+[33mcommit 9ff6fd52af50fa96b0ff47680f925ad5698bfea9[m
+Author: Appl3Kitti3 <tdumamag2@my.bcit.ca>
+Date:   Thu Feb 15 15:29:12 2024 -0800
+
+    Introduced Sample Enemy that follows a player when it is close performs attack and kills the player. The enemy can be hit and killed by a player.
+
+[33mcommit b4bec9a209be2655cb3844d2dd1358a000ff6078[m
+Author: Appl3Kitti3 <tdumamag2@my.bcit.ca>
+Date:   Tue Feb 13 18:15:50 2024 -0800
+
+    Started to design a menu room for Endless Catacombs
+
+[33mcommit a64666702cffc0422af32e82c33cb54145c9b0c5[m
+Author: Appl3Kitti3 <tdumamag2@my.bcit.ca>
+Date:   Thu Feb 8 12:30:37 2024 -0800
+
+    Added Empty 2D Unity Project
+
+[33mcommit b3ed737131a645909b9f3cb7ea7d76b1611c193b[m
+Author: Teddy <113390941+Appl3Kitti3@users.noreply.github.com>
+Date:   Thu Feb 8 12:16:43 2024 -0800
+
+    Initial commit

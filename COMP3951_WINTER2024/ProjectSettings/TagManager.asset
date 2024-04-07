@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - InitialPosition
+  - HUD
   layers:
   - Default
   - TransparentFX
@@ -12,8 +14,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 
@@ -42,6 +44,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Sky
+    uniqueID: 2643067891
+    locked: 0
   - name: Background
     uniqueID: 2780074249
     locked: 0
@@ -50,4 +55,7 @@ TagManager:
     locked: 0
   - name: NPC
     uniqueID: 2257988415
+    locked: 0
+  - name: Enemy
+    uniqueID: 731632441
     locked: 0
