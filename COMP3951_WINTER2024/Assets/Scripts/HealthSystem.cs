@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -21,8 +16,7 @@ public class HealthSystem : MonoBehaviour
 {
 
     // Animator of the player
-    [FormerlySerializedAs("PlayerAnimator")] [SerializeAs("Player's Animator")]
-    public Animator playerAnimator;
+    private Animator _playerAnimator;
 
     // Health of the player
     private int _health;
@@ -33,22 +27,24 @@ public class HealthSystem : MonoBehaviour
     // Amount of heart sprites in the system
     public Image[] hearts;
 
-    // Called once instantiated.
-    private void Awake()
+    // Called at the beginning of the frame once this is created.
+    private void Start()
     {
-        _health = _maxHealth = playerAnimator.GetInteger("HP");   
+        _playerAnimator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
+        _health = _maxHealth = _playerAnimator.GetInteger("HP");
     }
     
     // Update is called once per frame.
     void Update()
     {
-        if (playerAnimator.IsDestroyed())
+        if (_playerAnimator.IsDestroyed())
             return;
-        _health = playerAnimator.GetInteger("HP");
+        _health = _playerAnimator.GetInteger("HP");
         
         if (_health > _maxHealth)
             _health = _maxHealth;
         
+        // Enable a certain amount of hearts.
         for (int i = 0; i < hearts.Length; i++)
         {
             if (i < _health)

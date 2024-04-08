@@ -27,8 +27,12 @@ using UnityEngine.Serialization;
 ///
 ///     Knock back tutorial
 ///     https://youtu.be/RE0aWe7ByAI
+///
+///     Expression Bodied Members
+///     https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
+/// 
 /// </summary>
-public class Creature : MonoBehaviour
+public class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
 {
     [Header ("Stats")]
  
@@ -74,17 +78,22 @@ public class Creature : MonoBehaviour
     // The direction of the creature facing.
     private Vector2 _direction;
     
+    // Gets the x direction.
+    public float GetHorizontalDirection => _direction.x;
+
+    // The invisible attack box that is in front of the creature.
+    private GameObject _invisibleAttackBox;
+    
     // The sprite renderer of the creature. Used to manipulate its colors and have a damage
     // color effect.
     private SpriteRenderer _rend;
-
-    private bool _isInflicted;
+    
     // Called once creature is instantiated.
     private void Awake()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
     }
-
+    
     // Called as a timer invoke function, changes the sprite color to red.
     void InflictHitColor()
     {
@@ -102,7 +111,6 @@ public class Creature : MonoBehaviour
     void GetRidOfSelf()
     {
 // -------------------------------------------------------------------------------------------------------------------- (1)
-        Debug.Log("dead");
         Destroy(gameObject);
     }
 
@@ -116,9 +124,7 @@ public class Creature : MonoBehaviour
         // Move this logic to the Melee class
         _health -= (dmg - def);
         
-        
         // Double change color because the animation hits the enemy twice.
-        _isInflicted = true;
         Invoke(nameof(InflictHitColor), 0f);
         Invoke(nameof(RevertColor), 0.4f);
 // -------------------------------------------------------------------------------------------------------------------- (2)
@@ -142,6 +148,7 @@ public class Creature : MonoBehaviour
     {
         _rend = GetComponent<SpriteRenderer>();
         _health = maxHealth;
+        _invisibleAttackBox = transform.GetChild(0).gameObject;
     }
 
     // Update is called once per frame
@@ -151,10 +158,16 @@ public class Creature : MonoBehaviour
         // further issues
         if (_player.IsUnityNull())
             return;
+
+        if (Player.GetInstance().HasEnteredImmunityFramesRegion)
+            _invisibleAttackBox.SetActive(false);
+        else
+            _invisibleAttackBox.SetActive(true);
         
         // calculates the direction
-        Vector3 curr = transform.position;
-        Vector3 playerPosition = _player.transform.position;
+        // create a class or another collider for range
+        Vector2 curr = transform.position;
+        Vector2 playerPosition = _player.transform.position;
         _distance = Vector2.Distance(curr, playerPosition);
         _direction = playerPosition - curr;
         _direction.Normalize();
@@ -183,33 +196,25 @@ public class Creature : MonoBehaviour
     {
 // -------------------------------------------------------------------------------------------------------------------- (3)
         // Change the direction ( Flip the sprite )
-        // if (_direction.x < 0)
-        //     transform.localScale = new Vector3(-1, 1, 1);
-        // else if (_direction.x > 0)
-        //     transform.localScale = new Vector3(1, 1, 1);
-        // Noah - Moved to Update() based on feedback from programmer+gamedev uncle
-
-/* TODO (Keep, this partial code might be a future use)
-    if (distance < 2)
-        {
-            Player.GetInstance().InflictDamage(Damage);
-            // please add a cooldown. Enemies are too overpowered.
-        }        
-*/
+        if (_direction.x < 0)
+            transform.localScale = new Vector3(-1, 1, 1);
+        else if (_direction.x > 0)
+            transform.localScale = new Vector3(1, 1, 1);
     }
 
     // Ensures knock-back logic from the player.
-    private void OnTriggerStay2D(Collider2D other)
+    /*private void OnTriggerStay2D(Collider2D other)
     {
         if (!other.CompareTag("Player"))
             return;
         if (_isInflicted)
         {
+            // TODO: ForceModes2D
             Vector3 currPos = transform.position;
             Vector2 diff = currPos - other.transform.position;
             transform.position = new Vector2(currPos.x + diff.x, currPos.y + diff.y);
             _isInflicted = false;
         }
             
-    }
+    }*/
 }

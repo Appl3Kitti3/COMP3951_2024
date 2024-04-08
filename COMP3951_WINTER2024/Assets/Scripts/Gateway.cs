@@ -33,7 +33,6 @@ public class Gateway : MonoBehaviour
     // Called once the player enters the region of the gateway.
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Pen Pineapple Apple Pen");
         if (!other.gameObject.CompareTag("Player"))
             return;
         StartCoroutine(LoadSceneAsync());
@@ -51,13 +50,15 @@ public class Gateway : MonoBehaviour
         // While not done
         while (!asyncLoad.isDone)
             yield return null;
-
+        
+        
         // Example scene right now
         Scene nextScene = SceneManager.GetSceneByName("SimpleRoom");
         
         // TODO: Future plan, move player class to the Player Game Object.
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("HUD"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("Player"), nextScene);
+        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("CrossHair"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);
         
         SceneManager.UnloadSceneAsync(currentScene);
