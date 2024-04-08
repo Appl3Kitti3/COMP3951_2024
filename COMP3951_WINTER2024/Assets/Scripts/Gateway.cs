@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,6 +32,17 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class Gateway : MonoBehaviour
 {
+    private bool _isRendering;
+
+    public GameObject[] data;
+
+    private GameObject ply;
+
+    private int counter = 0;
+    private void Start()
+    {
+    }
+
     // Called once the player enters the region of the gateway.
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -42,10 +55,12 @@ public class Gateway : MonoBehaviour
     // Loads the scene switching logic.
     private IEnumerator LoadSceneAsync()
     {
+        if (RetainCall.AddAndCheckCounter(ref counter))
+            yield break;
         Scene currentScene = SceneManager.GetActiveScene();
 
         // Load Scene
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("SimpleRoom", LoadSceneMode.Additive);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Shop", LoadSceneMode.Additive);
 
         // While not done
         while (!asyncLoad.isDone)
@@ -53,17 +68,20 @@ public class Gateway : MonoBehaviour
         
         
         // Example scene right now
-        Scene nextScene = SceneManager.GetSceneByName("SimpleRoom");
+        Scene nextScene = SceneManager.GetSceneByName("Shop");
         
         // TODO: Future plan, move player class to the Player Game Object.
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("HUD"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("Player"), nextScene);
         SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("CrossHair"), nextScene);
-        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);
+        /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);*/
+        /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("BackgroundSystems"), nextScene);*/
         
         SceneManager.UnloadSceneAsync(currentScene);
         
         Vector3 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
         GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position = playerSpawn;
     }
+    
+    
 }

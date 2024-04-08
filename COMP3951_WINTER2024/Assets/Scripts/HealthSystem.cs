@@ -15,9 +15,6 @@ using UnityEngine.UI;
 public class HealthSystem : MonoBehaviour
 {
 
-    // Animator of the player
-    private Animator _playerAnimator;
-
     // Health of the player
     private int _health;
 
@@ -30,16 +27,13 @@ public class HealthSystem : MonoBehaviour
     // Called at the beginning of the frame once this is created.
     private void Start()
     {
-        _playerAnimator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
-        _health = _maxHealth = _playerAnimator.GetInteger("HP");
+        _health = _maxHealth = Player.GetInstance().Health;
     }
     
     // Update is called once per frame.
     void Update()
     {
-        if (_playerAnimator.IsDestroyed())
-            return;
-        _health = _playerAnimator.GetInteger("HP");
+        _health = Player.GetInstance().Health;;
         
         if (_health > _maxHealth)
             _health = _maxHealth;

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6480956109191988158}
   - component: {fileID: 3480556207338328870}
-  - component: {fileID: 299785102334351428}
+  - component: {fileID: 5026136930553956030}
   m_Layer: 0
   m_Name: Blob Attack Box
   m_TagString: Invisible Hit Box
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2036978881
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &299785102334351428
+--- !u!114 &5026136930553956030
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,9 +94,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 155183535663706505}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aabfc6b2a48de34f81d17135031da53, type: 3}
+  m_Script: {fileID: 11500000, guid: a460d3fb1d1c92b41b987ab536e9750a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xTranslate: 0
-  yTranslate: 0
-  currentObject: {fileID: 0}
