@@ -1,3 +1,4 @@
+using EndlessCatacombs;
 using UnityEngine;
 
 /// <summary>
@@ -48,7 +49,8 @@ public class StartingButtonsController : MonoBehaviour
     {
         // Enable Melee player gameObject
         players[0].SetActive(true);
-        
+        Player.GetInstance(players[0].GetComponent<PlayerController>().Health, players[0].GetComponent<Animator>());
+        Player.GetInstance().ChosenClass = new Melee(Constants.MeleeSpeed);
         // Make MainCamera player gameObject to be this class
         ChangePlayer(players[0]);
         
@@ -60,6 +62,8 @@ public class StartingButtonsController : MonoBehaviour
     public void PickArcher()
     {
         players[1].SetActive(true);
+        Player.GetInstance(players[1].GetComponent<PlayerController>().Health, players[1].GetComponent<Animator>());
+        Player.GetInstance().ChosenClass = new Archer(Constants.ArcherSpeed);
         ChangePlayer(players[1]);
         CloseChoice();
     }
@@ -68,10 +72,12 @@ public class StartingButtonsController : MonoBehaviour
     public void PickMage()
     {
         players[2].SetActive(true);
+        Player.GetInstance(players[2].GetComponent<PlayerController>().Health, players[2].GetComponent<Animator>());
+        Player.GetInstance().ChosenClass = new Mage(Constants.MageSpeed);
         ChangePlayer(players[2]);
         CloseChoice();
     }
-
+    
     // Make Camera player gameObject to the chosen class
     private void ChangePlayer(GameObject o)
     {
@@ -81,6 +87,11 @@ public class StartingButtonsController : MonoBehaviour
     // Close this GUI
     private void CloseChoice()
     {
+        foreach (var player in players)
+        {
+            if (!player.activeInHierarchy)
+                Destroy(player);
+        }
         GameObject.Find("StartingButtons").SetActive(false);
         _gui.SetActive(true);
     }

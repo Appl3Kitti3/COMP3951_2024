@@ -10,6 +10,7 @@ TagManager:
   - Invisible Hit Box
   - CharacterPicker
   - CrossHair
+  - BackgroundSystems
   layers:
   - Default
   - TransparentFX
@@ -53,6 +54,12 @@ TagManager:
   - name: Background
     uniqueID: 2780074249
     locked: 0
+  - name: Structure Filled
+    uniqueID: 492974229
+    locked: 0
+  - name: VFX Back
+    uniqueID: 1510607475
+    locked: 0
   - name: Player
     uniqueID: 3060180873
     locked: 0
@@ -61,4 +68,13 @@ TagManager:
     locked: 0
   - name: Enemy
     uniqueID: 731632441
+    locked: 0
+  - name: VFX Front
+    uniqueID: 207569713
+    locked: 0
+  - name: Structure Hallow
+    uniqueID: 3385062209
+    locked: 0
+  - name: GUI
+    uniqueID: 128372657
     locked: 0
