@@ -54,11 +54,20 @@ public abstract class Projectile : Attack
     private Vector2 GetTargetPosition()
     {
         Vector2 to;
-        to = ParentObject.CompareTag("Player") ? 
-            GameObject.FindWithTag("MainCamera").GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition) 
-            : GameObject.FindWithTag("Player").transform.position;
-            
-        return to - _parent;
+        try
+        {
+            to = ParentObject.CompareTag("Player") ? 
+                GameObject.FindWithTag("MainCamera").GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition) 
+                : GameObject.FindWithTag("Player").transform.position;
+            return to - _parent;
+        }
+        catch (NullReferenceException e)
+        {
+            BeforeDestroy();
+        }
+
+        return _parent;
+
     }
 
     protected virtual void BeforeDestroy() {}

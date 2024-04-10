@@ -19,6 +19,7 @@ public class Player
     // Health of the player.
     private int _health;
 
+    private int maxHealth;
     public int Health => _health;
     // Animator object of the player gameObject that represents its animation sprite.
     private Animator _animator;
@@ -32,10 +33,6 @@ public class Player
     
     // Singleton object of the Player class.
     private static Player _instance;
-    
-    // Get the damage of the player instance. Currently used as a example prototype
-    // however, it will be calculated through the weapon class.
-    public int Damage { get; set; }
     
     // Checks if an enemy has entered the immunity frame region.
     public bool HasEnteredImmunityFramesRegion { get; set; } = false;
@@ -54,6 +51,8 @@ public class Player
         }
     }
 
+    public int Level { get; set; } = 1;
+
     public int Score
     {
         get;
@@ -64,7 +63,7 @@ public class Player
     {
         get
         {
-            if (_playerData.LongerImmunityFrames)
+            if (abilities[0])
                 return 2f;
             return 1f;
         }
@@ -74,7 +73,7 @@ public class Player
     {
         get
         {
-            if (_playerData.LuckyDice)
+            if (abilities[1])
                 return Random.Range(0, 2);
             return -1;
         }
@@ -84,11 +83,14 @@ public class Player
     {
         get
         {
-            if (_playerData.BigProjectiles)
+            if (abilities[2])
                 return 1.5f;
             return 1f;
         }
     }
+
+    private bool[] abilities = new[] { false, false, false };
+    
     private PlayerData _playerData;
     /// <summary>
     /// Create the player class.
@@ -96,11 +98,11 @@ public class Player
     /// <param name="hp">Health points.</param>
     /// <param name="dmg">Base damage of the player.</param>
     /// <param name="animator">Animation of the gameObject.</param>
-    private Player(int hp, Animator animator) {
-        _health = hp;
+    private Player(int hp = 0, Animator animator = null) {
+        _health = maxHealth = hp;
         /*Damage = dmg;*/
         _animator = animator;
-
+        
         string line;
         try
         {
@@ -111,44 +113,58 @@ public class Player
             using StreamReader sr = new StreamReader(Constants.Path);
             line = sr.ReadToEnd();
             _playerData = JsonUtility.FromJson<PlayerData>(line);
+            _highscore = _playerData.Highscore;
         }
         catch (Exception x)
         {
             Directory.CreateDirectory(".\\Data");
             _playerData = new PlayerData();
-            WriteToJson();
+            SaveGameToJson();
         }
+        
 
-        HighScore = 3000;
 
     }
 
     // Get the only singleton instance of the player.
-    public static Player GetInstance(int maxhp = 9999, Animator animator = null)
+    public static Player GetInstance()
     {
         if (_instance.IsUnityNull()) 
-            _instance = new Player(maxhp, animator);
-        else if (_instance._animator.IsUnityNull())
-            _instance._animator = animator;
+            _instance = new Player();
         return _instance;
     }
 
+    public static Player FixFields(int maxhp, Animator animator)
+    {
+        _instance._health = _instance.maxHealth = maxhp;
+        _instance._animator = animator;
+        return _instance;
+    }
+
+
+    public void IncrementHealth()
+    {
+        _health++;
+        if (_health > maxHealth)
+            _health = maxHealth;
+    }
     public static void Reset()
     {
         _instance.HighScore = _instance.Score;
         _instance._playerData.Highscore = _instance.HighScore;
-        _instance.WriteToJson();
+        _instance.SaveGameToJson();
         
         _instance = null;
     }
     public void DamagePlayer(int dmg)
     {
+        Debug.Log(_health);
         _health -= dmg;
         if (_health <= 0)
             _animator.SetTrigger("Killed");
     }
 
-    void WriteToJson()
+    public void SaveGameToJson()
     {
 
         string json = JsonUtility.ToJson(_playerData);
@@ -173,21 +189,19 @@ public class Player
         {
             case "IFrames":
             {
-                _playerData.LongerImmunityFrames = status;
+                abilities[0] = status;
                 break;
             }
             case "LDice":
             {
-                _playerData.LuckyDice = status;
+                abilities[1] = status;
                 break;
             }
             case "BProjectile":
             {
-                _playerData.BigProjectiles = status;
+                abilities[2] = status;
                 break;
             }
-                default:
-                    break;
         }
     }
 
@@ -195,10 +209,38 @@ public class Player
     {
         switch (dataName)
         {
-            case "IFrames": return _playerData.LongerImmunityFrames;
-            case "LDice": return _playerData.LuckyDice;
-            case "BProjectile": return _playerData.BigProjectiles;
+            case "IFrames": return abilities[0];
+            case "LDice": return abilities[1];
+            case "BProjectile": return abilities[2];
             default: return false;
+        }
+    }
+
+    public float GetBGMusicVolume()
+    {
+        return _playerData.BGMusicVolume;
+    }
+
+    public float GetSFXVolume()
+    {
+        return _playerData.SFXVolume;
+    }
+
+
+    public void SetVolume(string type, float value)
+    {
+        switch (type)
+        {
+            case "Music":
+            {
+                _playerData.BGMusicVolume = value;
+                break;
+            }
+            case "SFX":
+            {
+                _playerData.SFXVolume = value;
+                break;
+            }
         }
     }
 }

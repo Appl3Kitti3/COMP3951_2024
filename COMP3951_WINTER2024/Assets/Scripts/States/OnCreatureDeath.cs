@@ -8,6 +8,7 @@ public class OnCreatureDeath : OnDeathStateExit
     {
         Creature c = animator.gameObject.GetComponent<Creature>();
         Player.GetInstance().Score += c.PointValue;
+        Room.Instance.EnemyCount--;
         base.OnStateExit(animator, stateInfo, layerIndex);
     }
 }

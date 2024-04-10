@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Description:
@@ -34,13 +37,25 @@ public class Gateway : MonoBehaviour
 {
     private bool _isRendering;
 
-    public GameObject[] data;
+    protected GameObject[] movableGameObj;
 
-    private GameObject ply;
-
-    private int counter = 0;
+    private int nextScene;
     private void Start()
     {
+        movableGameObj = GetMovableObjects();
+    }
+    
+
+    protected virtual GameObject[] GetMovableObjects()
+    {
+        return new[]
+        {
+            GameObject.FindWithTag("HUD"),
+            GameObject.FindWithTag("Player"),
+            GameObject.FindWithTag("CrossHair"), 
+            GameObject.FindWithTag("MainCamera"),
+            null
+        };
     }
 
     // Called once the player enters the region of the gateway.
@@ -48,40 +63,70 @@ public class Gateway : MonoBehaviour
     {
         if (!other.gameObject.CompareTag("Player"))
             return;
+            
+        PerformTransitionTask();
         StartCoroutine(LoadSceneAsync());
         // unload scene asnyc
+        
+        
     }
 
     // Loads the scene switching logic.
     private IEnumerator LoadSceneAsync()
     {
-        if (RetainCall.AddAndCheckCounter(ref counter))
-            yield break;
+        if (movableGameObj[1].IsUnityNull())
+            movableGameObj[1] = GameObject.FindWithTag("Player");
+        if (movableGameObj[0].IsUnityNull())
+            movableGameObj[0] = GameObject.FindWithTag("HUD");
         Scene currentScene = SceneManager.GetActiveScene();
 
         // Load Scene
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Shop", LoadSceneMode.Additive);
-
+        nextScene = GetNextScene();
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
+        
         // While not done
         while (!asyncLoad.isDone)
             yield return null;
         
         
-        // Example scene right now
-        Scene nextScene = SceneManager.GetSceneByName("Shop");
-        
         // TODO: Future plan, move player class to the Player Game Object.
-        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("HUD"), nextScene);
-        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("Player"), nextScene);
-        SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("CrossHair"), nextScene);
+        PerformMove();
         /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);*/
         /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("BackgroundSystems"), nextScene);*/
         
+        
         SceneManager.UnloadSceneAsync(currentScene);
         
-        Vector3 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
-        GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position = playerSpawn;
+
     }
-    
-    
+
+
+
+    protected virtual void PerformMove()
+    {
+        MoveObjectsToScene(nextScene, movableGameObj);   
+    }
+    public static void MoveObjectsToScene(int index, GameObject[] objs)
+    {
+        Scene nextScene = SceneManager.GetSceneByBuildIndex(index);
+        MoveObjectsToScene(nextScene, objs);
+    }
+
+    public static void MoveObjectsToScene(Scene nextScene, GameObject[] objs)
+    {
+        foreach (var gObject in objs)
+        {
+            if (!gObject.IsUnityNull())
+                SceneManager.MoveGameObjectToScene(gObject, nextScene);
+        }
+    }
+
+    protected virtual void PerformTransitionTask()
+    {}
+    protected virtual int GetNextScene()
+    {
+        // Start from 6.
+        /*Random.Range(6, 8);*/
+        return 6;
+    }
 }
