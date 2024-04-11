@@ -31,7 +31,11 @@ public static class Constants
 
     public const int MageSpeed = 20;
 
-    public const string Path = ".\\Data\\data.json";
+    public const int MaximumHealth = 5;
+
+    public const int MinimumHealth = 3;
+
+    public const string Path = @".\Data\data.json";
     
     
 }

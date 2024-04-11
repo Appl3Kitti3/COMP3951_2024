@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,11 +10,3 @@ public class PlayerDeath : OnDeathStateExit
         base.OnStateExit(animator, stateInfo, layerIndex);
     }
 }
-
-// if Respawn Button clicked
-//     if Current Score >= High score
-//        Set High score
-//      
-//
-//       Save High Score to file
-//

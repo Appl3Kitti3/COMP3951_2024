@@ -30,12 +30,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Gabby's Infero.unity
     guid: a66ab03fbc4d3284f840a8096e6e3510
   - enabled: 1
+    path: Assets/Scenes/Stables.unity
+    guid: 646f3a1c5a769ad4796773c15a5d6dfd
+  - enabled: 1
     path: Assets/Scenes/NightFall's Dojo.unity
     guid: d1c19c845060c3240a303143ff9dc6ba
   - enabled: 1
     path: Assets/Scenes/Necro's Dome.unity
     guid: e01ad844f25bfcf4da392fe72cbad06f
-  - enabled: 1
-    path: Assets/Scenes/Stables.unity
-    guid: 646f3a1c5a769ad4796773c15a5d6dfd
   m_configObjects: {}

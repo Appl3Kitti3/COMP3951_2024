@@ -17,93 +17,128 @@ using Random = UnityEngine.Random;
 public class Player
 {
     // Health of the player.
-    private int _health;
 
-    private int maxHealth;
-    public int Health => _health;
+    public static int GetHealth => _instance.Health;
+    
+    private int _maxHealth;
+
+    public static int GetMaxHealth => _instance._maxHealth;
+
+    private int Health { get; set; }
+
     // Animator object of the player gameObject that represents its animation sprite.
     private Animator _animator;
     
     // Get animator
-    public Animator Animator
+    public static Animator Animator
     {
-        get { return _animator; }
-        set { _animator = value;  }
+        get => _instance._animator;
+        set => _instance._animator = value;
     }
     
     // Singleton object of the Player class.
     private static Player _instance;
     
     // Checks if an enemy has entered the immunity frame region.
-    public bool HasEnteredImmunityFramesRegion { get; set; } = false;
-    
-    public Playable ChosenClass { get; set; }
+    public static bool HasEnteredImmunityFramesRegion { get; set; }
 
-    private int _highscore;
-    
-    public int HighScore
+    private Playable _playable;
+    public static Playable ChosenClass
     {
-        get => _highscore;
-        set 
+        get => _instance._playable;
+        private set
         {
-            if (IsNewHighScore(value)) 
-                _highscore = value;
+            _instance.Health = _instance._maxHealth = value.BaseHealth;
+            _instance._playable = value;
         }
     }
 
-    public int Level { get; set; } = 1;
+    private int _highScore;
+    
+    public static int HighScore
+    {
+        get => _instance._highScore;
+        private set 
+        {
+            if (IsNewHighScore(value)) 
+                _instance._highScore = value;
+        }
+    }
 
-    public int Score
+    public static int Level { get; set; } = 1;
+
+    public static int Score
     {
         get;
         set;
     }
 
-    public float GetImmunityFrameTimer
-    {
-        get
-        {
-            if (abilities[0])
-                return 2f;
-            return 1f;
-        }
-    }
+    public static float GetImmunityFrameTimer => _instance._abilities[0] ? 2f : 1f;
 
-    public int GetLuckyDiceRoll
+    public static int GetLuckyDiceRoll
     {
         get
         {
-            if (abilities[1])
+            if (_instance._abilities[1])
                 return Random.Range(0, 2);
             return -1;
         }
     }
 
-    public float GetProjectileScale
-    {
-        get
-        {
-            if (abilities[2])
-                return 1.5f;
-            return 1f;
-        }
-    }
+    public static float GetProjectileScale => _instance._abilities[2] ? 1.5f : 1f;
 
-    private bool[] abilities = new[] { false, false, false };
+    private readonly bool[] _abilities = { false, false, false };
     
     private PlayerData _playerData;
-    /// <summary>
-    /// Create the player class.
-    /// </summary>
-    /// <param name="hp">Health points.</param>
-    /// <param name="dmg">Base damage of the player.</param>
-    /// <param name="animator">Animation of the gameObject.</param>
-    private Player(int hp = 0, Animator animator = null) {
-        _health = maxHealth = hp;
-        /*Damage = dmg;*/
-        _animator = animator;
+    
+    private Player() {}
+
+    // Get the only singleton instance of the player.
+    public static void FixFields(Playable c, Animator a)
+    {
+        ChosenClass = c;
+        Animator = a;
+    }
+
+    public static void Initialize()
+    {
+        _instance = new Player();
+    }
+    
+    public static void IncrementHealth()
+    {
+        _instance.Health++;
+        if (GetHealth > GetMaxHealth)
+            _instance.Health = GetMaxHealth;
+    }
+    public static void Reset()
+    {
+        HighScore = Score;
+        _instance._playerData.highScore = HighScore;
+        SaveGameToJson();
         
-        string line;
+        _instance = null;
+        Initialize();
+    }
+    public static string DamagePlayer()
+    {
+        _instance.Health--;
+        if (GetHealth <= 0)
+            return "Killed";
+        return "Hit";
+    }
+
+    public static void SaveGameToJson()
+    {
+
+        string json = JsonUtility.ToJson(_instance._playerData);
+        
+        using StreamWriter sw = new StreamWriter(Constants.Path);
+        sw.WriteLine(json);
+    }
+
+    private void ObtainData()
+    {
         try
         {
             // https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/read-write-text-file#write-a-text-file-example-1
@@ -111,134 +146,89 @@ public class Player
             // https://docs.unity3d.com/ScriptReference/JsonUtility.FromJson.html
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory?view=net-8.0#system-io-directory-createdirectory(system-string)
             using StreamReader sr = new StreamReader(Constants.Path);
-            line = sr.ReadToEnd();
+            var line = sr.ReadToEnd();
             _playerData = JsonUtility.FromJson<PlayerData>(line);
-            _highscore = _playerData.Highscore;
+            _highScore = _playerData.highScore;
         }
-        catch (Exception x)
+        catch (Exception ex)
         {
-            Directory.CreateDirectory(".\\Data");
-            _playerData = new PlayerData();
-            SaveGameToJson();
+            if (ex is FileNotFoundException or DirectoryNotFoundException)
+            {
+                Directory.CreateDirectory(".\\Data");
+                _playerData = new PlayerData();
+                SaveGameToJson();    
+            }
+            
         }
-        
-
-
     }
 
-    // Get the only singleton instance of the player.
-    public static Player GetInstance()
+    public static bool IsNewHighScore(int score)
     {
-        if (_instance.IsUnityNull()) 
-            _instance = new Player();
-        return _instance;
+        return score >= HighScore;
     }
 
-    public static Player FixFields(int maxhp, Animator animator)
-    {
-        _instance._health = _instance.maxHealth = maxhp;
-        _instance._animator = animator;
-        return _instance;
-    }
-
-
-    public void IncrementHealth()
-    {
-        _health++;
-        if (_health > maxHealth)
-            _health = maxHealth;
-    }
-    public static void Reset()
-    {
-        _instance.HighScore = _instance.Score;
-        _instance._playerData.Highscore = _instance.HighScore;
-        _instance.SaveGameToJson();
-        
-        _instance = null;
-    }
-    public void DamagePlayer(int dmg)
-    {
-        Debug.Log(_health);
-        _health -= dmg;
-        if (_health <= 0)
-            _animator.SetTrigger("Killed");
-    }
-
-    public void SaveGameToJson()
-    {
-
-        string json = JsonUtility.ToJson(_playerData);
-        
-        Debug.Log($"{json}");
-        using StreamWriter sw = new StreamWriter(Constants.Path);
-        sw.WriteLine(json);
-            /*sw.Close();*/
-        
-
-    }
-
-
-    public bool IsNewHighScore(int score)
-    {
-        return score >= _highscore;
-    }
-
-    public void ModifyFlag(string dataName, bool status)
+    public static void ModifyFlag(string dataName, bool status)
     {
         switch (dataName)
         {
             case "IFrames":
             {
-                abilities[0] = status;
+                _instance._abilities[0] = status;
                 break;
             }
             case "LDice":
             {
-                abilities[1] = status;
+                _instance._abilities[1] = status;
                 break;
             }
             case "BProjectile":
             {
-                abilities[2] = status;
+                _instance._abilities[2] = status;
                 break;
             }
         }
     }
 
-    public bool GetFlag(string dataName)
+    public static bool GetFlag(string dataName)
     {
         switch (dataName)
         {
-            case "IFrames": return abilities[0];
-            case "LDice": return abilities[1];
-            case "BProjectile": return abilities[2];
+            case "IFrames": return _instance._abilities[0];
+            case "LDice": return _instance._abilities[1];
+            case "BProjectile": return _instance._abilities[2];
             default: return false;
         }
     }
 
-    public float GetBGMusicVolume()
+    public static float GetBgMusicVolume()
     {
-        return _playerData.BGMusicVolume;
+        if (_instance.IsUnityNull())
+            Initialize();
+        if (_instance._playerData.IsUnityNull())
+            _instance.ObtainData();
+        return _instance._playerData.bgMusicVolume;
     }
 
-    public float GetSFXVolume()
+    public static float GetSfxVolume()
     {
-        return _playerData.SFXVolume;
+        if (_instance._playerData.IsUnityNull())
+            _instance.ObtainData();
+        return _instance._playerData.sfxVolume;
     }
 
 
-    public void SetVolume(string type, float value)
+    public static void SetVolume(string type, float value)
     {
         switch (type)
         {
             case "Music":
             {
-                _playerData.BGMusicVolume = value;
+                _instance._playerData.bgMusicVolume = value;
                 break;
             }
             case "SFX":
             {
-                _playerData.SFXVolume = value;
+                _instance._playerData.sfxVolume = value;
                 break;
             }
         }

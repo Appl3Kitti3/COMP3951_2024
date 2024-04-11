@@ -6,5 +6,4 @@ public class OnDeathStateExit : StateMachineBehaviour
     {
         Destroy(animator.gameObject);
     }
-    
 }

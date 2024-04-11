@@ -6,6 +6,6 @@ public class MusicSlider : SoundSliders
 {
     protected override float GetValue()
     {
-        return Player.GetInstance().GetBGMusicVolume();
+        return Player.GetBgMusicVolume();
     }
 }

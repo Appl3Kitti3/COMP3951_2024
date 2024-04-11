@@ -1,11 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-// use AddForce
 public abstract class Projectile : Attack
 {
 
@@ -13,11 +9,11 @@ public abstract class Projectile : Attack
     
     protected Vector2 Target;
 
-    private readonly WaitForSeconds _wait = new WaitForSeconds(1);
+    private readonly WaitForSeconds _wait = new(1);
 
     protected Animator Animator;
 
-    [FormerlySerializedAs("projectile_type")] public string projectileType;
+    public string projectileType;
 
     protected override void Init()
     {
@@ -32,12 +28,6 @@ public abstract class Projectile : Attack
         );
         StartCoroutine(DestroySelf());
     }
-    private void Awake()
-    {
-        
-
-    }
-
     protected abstract void SetRotation();
 
     protected override void BeforeAddingImplodeForce()
@@ -53,15 +43,14 @@ public abstract class Projectile : Attack
     
     private Vector2 GetTargetPosition()
     {
-        Vector2 to;
         try
         {
-            to = ParentObject.CompareTag("Player") ? 
+            Vector2 to = ParentObject.CompareTag("Player") ? 
                 GameObject.FindWithTag("MainCamera").GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition) 
                 : GameObject.FindWithTag("Player").transform.position;
             return to - _parent;
         }
-        catch (NullReferenceException e)
+        catch (NullReferenceException)
         {
             BeforeDestroy();
         }
@@ -80,6 +69,6 @@ public abstract class Projectile : Attack
 
     protected override int GetAttackTypeDamage()
     {
-        return Player.GetInstance().ChosenClass.Weapon.PerformAttackType(projectileType);
+        return Player.ChosenClass.Weapon.PerformAttackType(projectileType);
     }
 }

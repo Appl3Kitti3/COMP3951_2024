@@ -1,28 +1,23 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomGateController : MonoBehaviour
 {
-    private AudioSource sfx;
+    private AudioSource _sfx;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         Room.Instance.EnemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        sfx = transform.parent.GetComponent<AudioSource>();
+        _sfx = transform.parent.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Room.Instance.EnemyCount <= 0)
-        {
-            sfx.Play();
-            Destroy(gameObject);
-        }
+        if (Room.Instance.EnemyCount > 0) return;
+        _sfx.Play();
+        Destroy(gameObject);
 
 
-            
+
     }
 }

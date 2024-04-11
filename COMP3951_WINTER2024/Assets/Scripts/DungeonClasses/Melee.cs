@@ -8,6 +8,7 @@
             Weapon = new Mace();
         }
 
+        public override int BaseHealth => Constants.MaximumHealth;
         public override string Name => "Melee";
 
         public override int GetSpeed()

@@ -1,12 +1,11 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 /// <summary>
 /// Description:
 ///     A creature or the enemy of the game. It has its necessary functions to operate a normal dungeon crawler life cycle.
-/// Author: Teddy Dumam-Ag A01329707
+/// Author:
 /// Date: March 5 2024 (Created around February)
 /// Sources:
 ///
@@ -33,18 +32,12 @@ using UnityEngine.Serialization;
 ///     https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
 /// 
 /// </summary>
-public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
+public partial class Creature : MonoBehaviour
 {
     [Header ("Stats")]
- 
-    /**
-     * TODO: On Creature Load like OnEnable or On Start. Make the level same as the player.
-     * From there, manipulate the MaxHealth, Defense, and Damage.
-     */
-    
     
     // The max health of the creature. (Assign this to the current health of the player)
-    [FormerlySerializedAs("MaxHealth")] public int maxHealth;
+    public int maxHealth;
 
     public int MaxHealth
     {
@@ -52,22 +45,18 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
         set => maxHealth = value;
     }
     // The current defense of the creature.
-    [FormerlySerializedAs("Defense")] public int def;
+    public int def;
 
     // The current damage of the creature.
     // in Future stand points, this will be the bae damage of the creature, and its true damage
     // is calculated based on the level and something else.
 
-    public int Damage { get; set; } = 1;
+    public static int Damage => 1;
 
     [SerializeField] private int points;
     
-    public int PointValue
-    {
-        get => points;
-        set => points = value;
-    }
-    
+    public int PointValue => points;
+
     [Header("Creature Configuration")] 
     // The maximum distance a creature can move towards the player before it goes back to
     // idle.
@@ -84,23 +73,17 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
         set => moveSpeed = value;
     }
     // The animator used to animate the sprite.
-    public Animator Animator { get; set; }
+    public Animator Animator { get; private set; }
 
     // TODO: Keep commented code for now.
     /*private string Name;*/
 
-    private int health;
+    private int _health;
     // Current health of the creature.
     public int Health
     {
-        get => health;
-        set
-        {
-            if (value >= maxHealth)
-                health = maxHealth;
-            else
-                health = value;
-        }
+        get => _health;
+        set => _health = value >= maxHealth ? maxHealth : value;
     }
     
     // The player game object from the current scene.
@@ -109,16 +92,22 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
     // The direction of the creature facing.
     private Vector2 _direction;
 
-    private AudioSource[] sfx;
+    private AudioSource[] _sfx;
+
+    private static readonly int Hit = Animator.StringToHash("Hit");
+    private static readonly int Speed = Animator.StringToHash("Speed");
+    private static readonly int Killed = Animator.StringToHash("Killed");
+    private static readonly int Primary = Animator.StringToHash("Primary");
+
     // Called once creature is instantiated.
     private void Awake()
     {
         Animator = gameObject.GetComponent<Animator>();
         _player = GameObject.FindGameObjectWithTag("Player");
         
-        int lvl = Player.GetInstance().Level;
+        var lvl = Player.Level;
         maxHealth *= lvl;
-        health = maxHealth;
+        _health = maxHealth;
         def *= lvl;
         points *= lvl;
         
@@ -138,23 +127,22 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
             StartCoroutine(RunAttacks());
         }
 
-        sfx = gameObject.GetComponents<AudioSource>();
+        _sfx = gameObject.GetComponents<AudioSource>();
         Init();
     }
-
+    
+    // bosses override
     protected virtual void Init()
-    {
-    }
+    {}
 
     private void Start()
     {
         RenderAbilities();   
     }
 
+    // bosses override
     protected virtual void RenderAbilities()
-    {
-        
-    }
+    { }
     // TODO (Death does not match with animation.)
     // Destroys itself.
 
@@ -164,11 +152,11 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
     /// <param name="dmg">The amount of damaged done by the opponent.</param>
     public void InflictDamage(int dmg)
     {
-        Animator.SetTrigger("Hit");
-        sfx[0].Play();
+        Animator.SetTrigger(Hit);
+        _sfx[0].Play();
         // TODO (Keep this for melee weapons)
         // Move this logic to the Melee class
-        health -= (dmg - dmg * (1 / def));
+        _health -= (dmg - dmg * (1 / def));
         // Mace / Melee class
         
     }
@@ -177,33 +165,33 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
     void Update()
     {
 
-        HandleAudioSFX();
+        HandleAudioSfx();
         // Skips the logic of the creature to prevent
         // further issues
         if (_player.IsUnityNull())
-            Animator.SetFloat("Speed", 0f);
+            Animator.SetFloat(Speed, 0f);
         else
             Move();
         
         // creature death 
         // TODO if health <= 0, this dies, set to death animation
-        if (health <= 0)
+        if (_health <= 0)
         {
-            Animator.SetTrigger("Killed");
+            Animator.SetTrigger(Killed);
             
-            Animator.ResetTrigger("Hit");
+            Animator.ResetTrigger(Hit);
         }
             
     }
 
-    void HandleAudioSFX()
+    private void HandleAudioSfx()
     {
-        if (Animator.GetBool("Primary"))
-            if (sfx.Length > 1)
-                sfx[1].Play();
+        if (!Animator.GetBool(Primary)) return;
+        if (_sfx.Length > 1)
+            _sfx[1].Play();
     }
 
-    void Move()
+    private void Move()
     {
         // calculates the direction
         // create a class or another collider for range
@@ -218,14 +206,14 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
         if (distance < maximumDistance && !ShouldStop())
         {
             _isProjectileLoopActive = true;
-            Animator.SetFloat("Speed", moveSpeed);
+            Animator.SetFloat(Speed, moveSpeed);
             // move the enemy
-            transform.position = Vector2.MoveTowards(curr, playerPosition, Animator.GetFloat("Speed") * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(curr, playerPosition, Animator.GetFloat(Speed) * Time.deltaTime);
         }
         else
         {
             _isProjectileLoopActive = false;
-            Animator.SetFloat("Speed", 0f);
+            Animator.SetFloat(Speed, 0f);
         }
     }
 
@@ -239,13 +227,17 @@ public partial class Creature : MonoBehaviour /* TODO: Implements IDamagable*/
 // -------------------------------------------------------------------------------------------------------------------- (3)
         // Change the direction ( Flip the sprite )
 
-        Vector2 scal = transform.localScale;
+        var localScale = transform.localScale;
+        Vector2 scale = localScale;
+        // that is a very interesting way of doing switch. Thanks Rider IDE.
+        localScale = _direction.x switch
+        {
             // Flip image
-            if (_direction.x < 0)
-                transform.localScale = new Vector2(-Math.Abs(scal.x), scal.y);
-            else if (_direction.x > 0)
-                transform.localScale = new Vector2(Math.Abs(scal.x), scal.y);
-
+            < 0 => new Vector2(-Math.Abs(scale.x), scale.y),
+            > 0 => new Vector2(Math.Abs(scale.x), scale.y),
+            _ => localScale
+        };
+        transform.localScale = localScale;
     }
     
 }
