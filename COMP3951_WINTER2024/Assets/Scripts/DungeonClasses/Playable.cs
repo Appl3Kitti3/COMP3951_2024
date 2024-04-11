@@ -10,9 +10,13 @@
     public abstract class Playable
     {
         public abstract string Name { get; }
+
+        public abstract int BaseHealth {get;}
         
         // Move speed of the player
         public int MoveSpeed { get; set; }
+
+        public int UltMoveSpeed {get; set;}
 
         public Weapon Weapon { get; set; }
 
@@ -22,6 +26,8 @@
         }
         // Returns a basic value of the move speed.
         public abstract int GetSpeed();
+
+        public abstract int GetUltSpeed();
         
     }
 }

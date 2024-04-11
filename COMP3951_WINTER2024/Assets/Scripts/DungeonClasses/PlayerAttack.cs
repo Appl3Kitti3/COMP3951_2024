@@ -33,6 +33,8 @@ using Debug = UnityEngine.Debug;
 /// </summary>
 partial class PlayerController : MonoBehaviour
 {
+    bool isFirstUltProjectile = true;
+
     private GameObject projectile;
 
     private Vector2 originalProjectileScale;
@@ -77,19 +79,24 @@ partial class PlayerController : MonoBehaviour
     
     void EnableUltimate()
     {
-        Player.GetInstance().Animator.SetBool("Ultimate", true);
-        /*Debug.Log("Ultimate is at Go!");*/
-        if (projectile_type.Equals("Ultimate"))
-        {
-            _isElapsed = true;
-            StartCoroutine(CreateMultipleProjectiles());
+        if (_isCooldownDone) {
+            Player.GetInstance().Animator.SetBool("Ultimate", true);
+            /*Debug.Log("Ultimate is at Go!");*/
+            if (projectile_type.Equals("Ultimate"))
+            {
+                _isElapsed = true;
+                StartCoroutine(CreateMultipleProjectiles());
+            }
+            else
+            {
+                stationaryHitBox.SetActive(true);
+            }
+            StartCoroutine(StartUltimateElapsed());
+            // wait for above thread to join
+            // DisableUltimate();
+            // DisableUltimate() waits for its thread to join
+            // method execution ends
         }
-        else
-        {
-            stationaryHitBox.SetActive(true);
-        }
-        StartCoroutine(StartUltimateElapsed());
-
     }
 
     void DisableUltimate()
@@ -103,10 +110,7 @@ partial class PlayerController : MonoBehaviour
             stationaryHitBox.SetActive(false);
         }
         _hasUltimateActive = false;
-
         StartCoroutine(StartCooldown());
-        
-        
     }
 
     IEnumerator StartUltimateElapsed()
@@ -115,12 +119,12 @@ partial class PlayerController : MonoBehaviour
         _hasUltimateActive = true;
         yield return new WaitForSeconds(timeDuringUltimateSeconds);
         DisableUltimate();
-
     }
 
     IEnumerator StartCooldown()
     {
         yield return new WaitForSeconds(ultimateCooldown);
+        isFirstUltProjectile = true;
         _isCooldownDone = true; // playSound in here
     }
 
@@ -130,9 +134,15 @@ partial class PlayerController : MonoBehaviour
         ModifyProjectile();
         while (_isElapsed)
         {
+            yield return GetDelay();  
             CreateProjectile();
-            yield return _creationDelay;    
         }
+    }
+
+    private WaitForSeconds GetDelay() {
+        if (!isFirstUltProjectile || !Player.ChosenClass.Name.Equals("Melee")) return _creationDelay;
+        isFirstUltProjectile = false;
+        return new WaitForSeconds((float)(timeBetweenProjectiles*2.5));
     }
     
     void ModifyProjectile()

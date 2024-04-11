@@ -11,11 +11,12 @@ TagManager:
   - CharacterPicker
   - CrossHair
   - BackgroundSystems
+  - Gateway
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Texture
   - Water
   - UI
   - Player
@@ -74,6 +75,9 @@ TagManager:
     locked: 0
   - name: Structure Hallow
     uniqueID: 3385062209
+    locked: 0
+  - name: Static Displays
+    uniqueID: 2919895725
     locked: 0
   - name: GUI
     uniqueID: 128372657

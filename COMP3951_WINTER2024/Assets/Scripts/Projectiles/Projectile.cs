@@ -54,11 +54,31 @@ public abstract class Projectile : Attack
     private Vector2 GetTargetPosition()
     {
         Vector2 to;
-        to = ParentObject.CompareTag("Player") ? 
-            GameObject.FindWithTag("MainCamera").GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition) 
-            : GameObject.FindWithTag("Player").transform.position;
-            
-        return to - _parent;
+        if (ParentObject.CompareTag("Player") ) {
+            if (Player.ChosenClass.Name == "Melee") {
+                // Melee
+                to.x = ParentObject.transform.localScale.x;
+                to.y = 0;
+                return to;
+            }
+            else {
+                // Archer or Mage
+                Vector3 temp = GameObject.FindWithTag("MainCamera").GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
+                to.x = temp.x;
+                to.y = temp.y;
+                Vector2 diff = to - _parent;
+                if (diff.x < 0) ParentObject.transform.localScale = new Vector3(-1, ParentObject.transform.localScale.y, 1);
+                else ParentObject.transform.localScale = new Vector3(1, ParentObject.transform.localScale.y, 1);
+                return diff;
+            }
+
+        } else {
+            // Creature
+            Vector3 temp = GameObject.FindWithTag("Player").transform.position;
+            to.x = temp.x;
+            to.y = temp.y;
+            return to - _parent;
+        }
     }
 
     protected virtual void BeforeDestroy() {}

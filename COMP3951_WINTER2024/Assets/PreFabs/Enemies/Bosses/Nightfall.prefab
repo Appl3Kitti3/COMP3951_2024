@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 559658234909598167}
   - component: {fileID: 5106341528842625316}
-  - component: {fileID: 5038717430621370813}
   - component: {fileID: 2541330960012258822}
   - component: {fileID: 400220724994069308}
   - component: {fileID: 485870687697829279}
@@ -75,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 207569713
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: -143796215, guid: 9f14e8fbd36571c48bf8a5ff9c8cf407, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -88,33 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &5038717430621370813
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281829744231367006}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 10
-  m_AngularDrag: 0
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!61 &2541330960012258822
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -266,7 +238,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2036978881
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -370,7 +342,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 731632441
-  m_SortingLayer: 6
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: -149220471, guid: 77bc78e107a4b8e44a812130eff4f1a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -482,6 +454,7 @@ MonoBehaviour:
   maxHealth: 1000
   def: 45
   damage: 1
+  points: 0
   maximumDistance: 85
   moveSpeed: 9
   attackDelay: 2

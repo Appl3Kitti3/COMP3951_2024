@@ -10,9 +10,15 @@
 
         public override string Name => "Mage";
 
+        public override int BaseHealth => Constants.MaximumHealth;
+
         public override int GetSpeed()
         {
             return (MoveSpeed / 2);
+        }
+
+        public override int GetUltSpeed() {
+            return (UltMoveSpeed / 2);
         }
     }
 }

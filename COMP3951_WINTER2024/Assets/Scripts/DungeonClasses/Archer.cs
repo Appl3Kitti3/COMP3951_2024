@@ -10,9 +10,15 @@
 
         public override string Name => "Archer";
 
+        public override int BaseHealth => Constants.MinimumHealth;
+
         public override int GetSpeed()
         {
             return MoveSpeed + (MoveSpeed / 2);
+        }
+
+        public override int GetUltSpeed() {
+            return UltMoveSpeed + (UltMoveSpeed / 2);
         }
     }
 }

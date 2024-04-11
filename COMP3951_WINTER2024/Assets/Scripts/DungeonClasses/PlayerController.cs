@@ -49,19 +49,18 @@ public partial class PlayerController : MonoBehaviour
 
 
     }
-
+    
     private void Awake()
     {
         _creationDelay = new WaitForSeconds(timeBetweenProjectiles);
         Init();
     }
     
-    
     // Start is called before the first frame update
     void Start()
     {
-        Vector2 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
-        transform.position = playerSpawn;
+        /*Vector2 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
+        transform.position = playerSpawn;*/
         Player.GetInstance().Animator = _animator;
     }
 
@@ -111,12 +110,14 @@ public partial class PlayerController : MonoBehaviour
 
         creatureAnimator.SetTrigger("Primary"); // change name to attack
         int diceValue = Player.GetInstance().GetLuckyDiceRoll;
+        Debug.Log(diceValue);
         switch (diceValue)
         {
             case 1: // player does not get hit but keeps the immmunity frame
                 break;
             default: // lose and player does not own Lucky Dice yet
                 _animator.SetTrigger("Hit");
+                gameObject.GetComponent<AudioSource>().Play();
                 Player.GetInstance().DamagePlayer(damage);
                 break;
         }

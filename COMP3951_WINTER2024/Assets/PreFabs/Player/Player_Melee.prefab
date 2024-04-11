@@ -75,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 207569713
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 2043832332, guid: 383cef09da795be449564e12a4940822, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -206,7 +206,6 @@ GameObject:
   - component: {fileID: 3624890368336773376}
   - component: {fileID: 4574594236628945847}
   - component: {fileID: 5965045754308765722}
-  - component: {fileID: 4102189972289388626}
   - component: {fileID: 3561390416114299385}
   - component: {fileID: 3855978608187956975}
   - component: {fileID: 1727374693576819678}
@@ -273,7 +272,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1234786423
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 6
   m_Sprite: {fileID: 139302152, guid: 4252cdc79daadc641ade62d94f4f4e69, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -313,41 +312,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!58 &4102189972289388626
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4912080331180590614}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.16}
-  serializedVersion: 2
-  m_Radius: 0.42
 --- !u!95 &3561390416114299385
 Animator:
   serializedVersion: 5
@@ -426,7 +390,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25243d54267396b469ee1007c1e47051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 52825749814460211}
   projectile_type: Ultimate
   timeBetweenProjectiles: 1
   health: 5
