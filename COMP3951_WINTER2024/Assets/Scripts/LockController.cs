@@ -1,63 +1,59 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Image = UnityEngine.UIElements.Image;
 
 public class LockController : MonoBehaviour
 { 
     [Header("Related Game Objects")]
-    [SerializeField] private GameObject[] _lockedDisplays;
+    [SerializeField] private GameObject[] lockedDisplays;
     // 0 --> Lock Structure
     // 1 --> Text "Requirement: N Score"
 
-    [SerializeField] private GameObject[] _unlockedDisplays;
+    [SerializeField] private GameObject[] unlockedDisplays;
 
+    
     [Header("Requirements")] 
-    [SerializeField] [SerializeAs("Price")] private int _scoreRequirement;
+    [SerializeField] [SerializeAs("Price")] private int scoreRequirement;
 
     [Header("Type")] [SerializeField] private string type;
+
+    private Toggle _toggle;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        if (Player.GetInstance().HighScore >= _scoreRequirement)
+        _toggle = unlockedDisplays[0].GetComponent<Toggle>();
+        if (Player.HighScore >= scoreRequirement)
         {
-            foreach (var gO in _lockedDisplays)
+            foreach (var gO in lockedDisplays)
                 gO.SetActive(false);
             
-            foreach (var gO in _unlockedDisplays)
+            foreach (var gO in unlockedDisplays)
                 gO.SetActive(true);
             
-            _unlockedDisplays[0].GetComponent<Toggle>().graphic.enabled = DetermineType();
+            _toggle.graphic.enabled = DetermineType();
         }
         else
         {
-            _lockedDisplays[1].GetComponent<TextMeshProUGUI>()
-                .text = $"Requires\n{_scoreRequirement} Score";
+            lockedDisplays[1].GetComponent<TextMeshProUGUI>()
+                .text = $"Requires\n{scoreRequirement} Score";
         }
     }
 
     private void Update()
     {
-        _unlockedDisplays[0].GetComponent<Toggle>().graphic.enabled = DetermineType();
+        _toggle.graphic.enabled = DetermineType();
     }
 
-    bool DetermineType()
+    private bool DetermineType()
     {
-        switch (type)
+        return type switch
         {
-            case "LIF":
-                return Player.GetInstance().GetFlag("IFrames");
-            case "LDice":
-                return Player.GetInstance().GetFlag("LDice");
-            case "BProjectile":
-                return Player.GetInstance().GetFlag("BProjectile");
-            default:
-                return false;
-        }
+            "LIF" => Player.GetFlag("IFrames"),
+            "LDice" => Player.GetFlag("LDice"),
+            "BProjectile" => Player.GetFlag("BProjectile"),
+            _ => false
+        };
     }
 }

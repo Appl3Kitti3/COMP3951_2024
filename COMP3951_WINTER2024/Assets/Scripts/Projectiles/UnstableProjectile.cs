@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -8,17 +6,18 @@ using UnityEngine;
 public class UnstableProjectile : Projectile
 {
     private bool _isImpact;
+    private static readonly int Landed = Animator.StringToHash("Landed");
 
     protected override void CheckBounds()
     {
-        Animator.SetTrigger("Landed");
+        Animator.SetTrigger(Landed);
         _isImpact = true;
     }
 
     protected override void BeforeDestroy()
     {
         if (!_isImpact)
-            Animator.SetTrigger("Landed");
+            Animator.SetTrigger(Landed);
     }
 
     protected override void SetRotation()
@@ -26,9 +25,9 @@ public class UnstableProjectile : Projectile
         transform.rotation = GetRotation(Target);
     }
     
-    private Quaternion GetRotation(Vector2 target)
+    private static Quaternion GetRotation(Vector2 target)
     {
-        float angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg;
+        var angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg;
         return Quaternion.Euler(0, 0, angle);
     }
 }

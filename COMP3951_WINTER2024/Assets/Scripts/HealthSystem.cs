@@ -1,11 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// Description:
 ///     Health system, a GUI shows the amount of hearts left for the player. 
-/// Author: Tedrik "Teddy" Dumam-Ag
+/// Author: 
 /// Date: March 20 2024
 /// Source:
 ///
@@ -14,42 +13,27 @@ using UnityEngine.UI;
 /// </summary>
 public class HealthSystem : MonoBehaviour
 {
-
-    // Health of the player
-    private int _health;
-
-    // Maximum health of the player, tells the maximum of life sprites will be drawn
-    private int _maxHealth;
+    
 
     // Amount of heart sprites in the system
     public Image[] hearts;
 
     // Called at the beginning of the frame once this is created.
-    private void Start()
-    {
-        _health = _maxHealth = Player.GetInstance().Health;
-    }
-    
+
     // Update is called once per frame.
     void Update()
     {
-        _health = Player.GetInstance().Health;;
-        
-        if (_health > _maxHealth)
-            _health = _maxHealth;
+        var health = Player.GetHealth;
+        var maxHealth = Player.GetMaxHealth;
+        if (health > maxHealth)
+            health = maxHealth;
         
         // Enable a certain amount of hearts.
-        for (int i = 0; i < hearts.Length; i++)
+        for (var i = 0; i < hearts.Length; i++)
         {
-            if (i < _health)
-                hearts[i].color = Color.red;
-            else
-                hearts[i].color = Color.blue;
+            hearts[i].color = i < health ? Color.red : Color.blue;
 
-            if (i < _maxHealth)
-                hearts[i].enabled = true;
-            else
-                hearts[i].enabled = false;
+            hearts[i].enabled = i < maxHealth;
         }
     }
 }

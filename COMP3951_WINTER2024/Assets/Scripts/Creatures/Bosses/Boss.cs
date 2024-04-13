@@ -1,8 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Boss : Creature
 {
@@ -28,21 +25,24 @@ public class Boss : Creature
         while (true)
         {
             
-            int picker = SelectAbility();
-            if (picker < 9)
+            var picker = SelectAbility();
+            switch (picker)
             {
-                if (!Projectile.activeInHierarchy)
+                case < 9:
                 {
-                    Animator.SetTrigger("Primary");
-                    PerformPrimary();                    
-                }
+                    if (!Projectile.activeInHierarchy)
+                    {
+                        Animator.SetTrigger("Primary");
+                        PerformPrimary();                    
+                    }
 
-            }
-            else if (picker == 9)
-            {
-                Animator.SetBool("Ultimate", true);
-                _isCharging = true;
-                Stationary.SetActive(true);
+                    break;
+                }
+                case 9:
+                    Animator.SetBool("Ultimate", true);
+                    _isCharging = true;
+                    Stationary.SetActive(true);
+                    break;
             }
             BeforeWait();
             yield return TimeDuringAttacks;

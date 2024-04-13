@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 ///     Player class is a singleton that represents the current stats of the player. (Damage, Health.)
 ///         It will have a weapon class to represent its weapon and its playable class to dynamically link
 ///         and switch to what class should be playing.
-/// Author: Teddy Dumam-Ag A01329707
+/// Author: 
 /// Date: March 27 2024
 /// Sources: Applied C# and OOP skills.
 ///
@@ -79,9 +79,7 @@ public class StartingButtonsController : MonoBehaviour
 
     void SetInstanceData(GameObject player, Playable c)
     {
-        int hp = player.GetComponent<PlayerController>().Health;
-        Animator animator = player.GetComponent<Animator>();
-        Player.FixFields(hp, animator).ChosenClass = c;
+        Player.FixFields(c, player.GetComponent<Animator>());
 
     }
     // Make Camera player gameObject to the chosen class
@@ -103,7 +101,7 @@ public class StartingButtonsController : MonoBehaviour
 
         
         Gateway.MoveObjectsToScene(1,
-        new GameObject[]
+        new[]
         {
             GameObject.FindWithTag("HUD"),
             GameObject.FindWithTag("Player"),

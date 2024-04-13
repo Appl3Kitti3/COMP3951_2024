@@ -1,20 +1,11 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 // TODO: Merges PlayerAttack.cs and PlayerMovement.cs
 // No long comments here because it is not finished and ready for use
 public partial class PlayerController : MonoBehaviour
 {
     [Header("Player Data")] 
-    
-    [SerializeField] private int health;
-
-    public int Health
-    {
-        get => health;
-    }
     
     // Holds Weapon
     // Weapon holds base damage
@@ -25,27 +16,18 @@ public partial class PlayerController : MonoBehaviour
 
     private Vector2 _directedMovement;
 
-    private GameObject stationaryHitBox;
+    private GameObject _nonProjectileHitBox;
 
-    [FormerlySerializedAs("reducedCooldown")]
-    [Header("Time Based Attacks")] 
     
-    [SerializeField] private float timeDuringUltimateSeconds;
-
-    [SerializeField] private float ultimateCooldown;
-
-    private bool _isCooldownDone = true;
-
-    private bool _hasUltimateActive = false;
     void Init()
     {
         _rigid = gameObject.GetComponent<Rigidbody2D>();
         _animator = gameObject.GetComponent<Animator>();
         
-        stationaryHitBox = transform.GetChild(0).gameObject;
-        projectile = transform.GetChild(1).gameObject;
+        _nonProjectileHitBox = transform.GetChild(0).gameObject;
+        _projectile = transform.GetChild(1).gameObject;
 
-        originalProjectileScale = projectile.transform.localScale;
+        _originalProjectileScale = _projectile.transform.localScale;
 
 
     }
@@ -61,12 +43,13 @@ public partial class PlayerController : MonoBehaviour
     {
         /*Vector2 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
         transform.position = playerSpawn;*/
-        Player.GetInstance().Animator = _animator;
+        Player.Animator = _animator;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         GetAxisPositionValues();
         HandleAttacks();
     }
@@ -103,22 +86,21 @@ public partial class PlayerController : MonoBehaviour
         MovePlayer();
     }
 
-    public void InflictDamage(int damage, Animator creatureAnimator)
+    public void InflictDamage(Animator creatureAnimator)
     {
-        if (Player.GetInstance().HasEnteredImmunityFramesRegion)
+        if (Player.HasEnteredImmunityFramesRegion)
             return;
 
-        creatureAnimator.SetTrigger("Primary"); // change name to attack
-        int diceValue = Player.GetInstance().GetLuckyDiceRoll;
-        Debug.Log(diceValue);
+        creatureAnimator.SetTrigger(Primary); // change name to attack
+        int diceValue = Player.GetLuckyDiceRoll;
         switch (diceValue)
         {
-            case 1: // player does not get hit but keeps the immmunity frame
+            case 1: // player does not get hit but keeps the immunity frame
                 break;
             default: // lose and player does not own Lucky Dice yet
-                _animator.SetTrigger("Hit");
+                
                 gameObject.GetComponent<AudioSource>().Play();
-                Player.GetInstance().DamagePlayer(damage);
+                _animator.SetTrigger(Player.DamagePlayer());
                 break;
         }
         
@@ -126,8 +108,8 @@ public partial class PlayerController : MonoBehaviour
     }
     IEnumerator AttackDelay()
     {
-        Player.GetInstance().HasEnteredImmunityFramesRegion = true;
-        yield return new WaitForSeconds(Player.GetInstance().GetImmunityFrameTimer);
-        Player.GetInstance().HasEnteredImmunityFramesRegion = false;
+        Player.HasEnteredImmunityFramesRegion = true;
+        yield return new WaitForSeconds(Player.GetImmunityFrameTimer);
+        Player.HasEnteredImmunityFramesRegion = false;
     }
 }

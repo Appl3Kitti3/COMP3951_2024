@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +7,7 @@ public class PositionOverlayController : MonoBehaviour
     private string _sceneName;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _sceneName = GetSceneName();
     }
@@ -17,23 +15,17 @@ public class PositionOverlayController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        {
             SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
-        }
             
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+        try
         {
-            try
-            {
-                SceneManager.UnloadSceneAsync(_sceneName);
-            } catch(ArgumentException e)
-            {}
-            
-        }
+            SceneManager.UnloadSceneAsync(_sceneName);
+        } catch(ArgumentException) {}
 
     }
 

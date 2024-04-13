@@ -1,10 +1,9 @@
-using EndlessCatacombs;
 using UnityEngine;
 
 /// <summary>
 /// Description:
 ///     Partial class of PlayerController. Represents the movement functions of the player.
-/// Author: Teddy Dumam-Ag A01329707
+/// Author: 
 /// Date: April 2 2024
 /// Sources:
 ///
@@ -22,12 +21,14 @@ using UnityEngine;
 /// </summary>
 partial class PlayerController
 {
+    private static readonly int Speed = Animator.StringToHash("Speed");
+
     void GetAxisPositionValues()
     {
         // Move logic of the player.
         _directedMovement.x = Input.GetAxisRaw("Horizontal");
         _directedMovement.y = Input.GetAxisRaw("Vertical");
-        _animator.SetFloat("Speed", _directedMovement.sqrMagnitude);
+        _animator.SetFloat(Speed, _directedMovement.sqrMagnitude);
     }
     
     void FlipSelf()
@@ -43,6 +44,6 @@ partial class PlayerController
     {
         // Player movement
         _rigid.MovePosition(_rigid.position + 
-                            _directedMovement * (Player.GetInstance().ChosenClass.GetSpeed() * Time.deltaTime));
+                            _directedMovement * (Player.ChosenClass.GetSpeed() * Time.deltaTime));
     }
 }

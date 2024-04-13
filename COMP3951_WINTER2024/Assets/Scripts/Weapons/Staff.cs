@@ -4,23 +4,23 @@ public class Staff : Weapon
     {
         BaseDamage = Constants.BaseStaff;
     }
-    
-    public override int CalculateDamage()
+
+    protected override int CalculateDamage()
     {
-        int actualDamage = (BaseDamage/3);
+        var actualDamage = (BaseDamage/3);
         
         // Critical Hit
         if (IsLandedOnCriticalHit())
-            return actualDamage + CritDamage + Constants.MageCritical;
+            return actualDamage + CriticalDamage + Constants.MageCritical;
         return actualDamage;
     }
 
-    public override int UltimateAbility()
+    protected override int UltimateAbility()
     {
-        double actualDamage = (double) BaseDamage / 3 + BaseDamage * (1 / (double)Constants.StaffMultiplier);
+        var actualDamage = (double) BaseDamage / 3 + BaseDamage * (1 / (double)Constants.StaffMultiplier);
 
         if (IsLandedOnCriticalHit())
-            return (int) actualDamage + (CritDamage / 3) + Constants.MageCritical;
+            return (int) actualDamage + (CriticalDamage / 3) + Constants.MageCritical;
         return (int) actualDamage;
     }
 }

@@ -8,9 +8,9 @@
             Weapon = new Bow();
         }
 
-        public override string Name => "Archer";
-
         public override int BaseHealth => Constants.MinimumHealth;
+        
+        public override string Name => "Archer";
 
         public override int GetSpeed()
         {

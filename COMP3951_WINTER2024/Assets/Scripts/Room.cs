@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEngine;
 
 public class Room
 {
@@ -15,7 +12,6 @@ public class Room
 
     private Room()
     {}
-
     
     // https://stackoverflow.com/questions/2404815/singleton-properties
     public static Room Instance

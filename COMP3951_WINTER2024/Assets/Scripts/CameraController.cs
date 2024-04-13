@@ -1,4 +1,3 @@
-
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,23 +25,27 @@ public class CameraController : MonoBehaviour
     public Transform target;
 
     // Crosshair of the game
-    public GameObject crossHair;
+    [SerializeField] private GameObject crossHair;
     
+    private Camera _camera;
+
     // Update is called once per frame
+    private void Start()
+    {
+        _camera = GetComponent<Camera>();
+    }
+
     void Update()
     {
         // Gets a crosshair and it follows based on the mouse position
-        var currMousePos = GetComponent<Camera>().ScreenToWorldPoint(Input.mousePosition);
+        var currMousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
         currMousePos.z = 0f;
         crossHair.transform.position = currMousePos;
         
         // Moves the camera to the player mosition.
         Transform curr = transform;
-        if (!target.IsUnityNull())
-        {
-            Vector3 temp = target.transform.position;
-            curr.position = new Vector3(temp.x, temp.y, curr.position.z);
-        }
-            
-    }
+        if (target.IsUnityNull()) return;
+        var temp = target.transform.position;
+        curr.position = new Vector3(temp.x, temp.y, curr.position.z);
+    }   
 }

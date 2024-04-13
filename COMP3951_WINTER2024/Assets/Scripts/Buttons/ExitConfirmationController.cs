@@ -5,7 +5,7 @@ public class ExitConfirmationController : MonoBehaviour
 {
     public void YesButton()
     {
-        Player.GetInstance().SaveGameToJson();
+        Player.SaveGameToJson();
         Application.Quit();
     }
 

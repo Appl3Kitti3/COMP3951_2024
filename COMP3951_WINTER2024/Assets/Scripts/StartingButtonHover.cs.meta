@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:COMP3951_WINTER2024/Assets/Scripts/StartingButtonHover.cs.meta
 guid: afb31c27ce5c20f41a4c21d741687a82
+========
+guid: 6b1ba7a540c3afd428d6b3aa6434f29b
+>>>>>>>> 399beca759a85e92b874c6817617b890efcf1267:COMP3951_WINTER2024/Assets/Scripts/States/ProjectileDeathState.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

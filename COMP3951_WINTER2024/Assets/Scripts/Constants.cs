@@ -41,7 +41,7 @@ public static class Constants
 
     public const int MageUltSpeed = 8;
 
-    public const string Path = ".\\Data\\data.json";
+    public const string Path = @".\Data\data.json";
     
     
 }

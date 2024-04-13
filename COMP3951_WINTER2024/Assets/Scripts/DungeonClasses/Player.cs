@@ -17,14 +17,13 @@ using Random = UnityEngine.Random;
 public class Player
 {
     // Health of the player.
-    private int _health;
+    public int Health {get; set;}
 
-    public static int Health {
-        get => _health;
-        private set {_health = value;}
-    }
+    public static int GetHealth => _instance.Health;
 
     private int _maxHealth;
+
+    public static int GetMaxHealth => _instance._maxHealth;
 
     // Animator object of the player gameObject that represents its animation sprite.
     private Animator _animator;
@@ -32,32 +31,36 @@ public class Player
     // Get animator
     public static Animator Animator
     {
-        get { return _instance._animator; }
-        set { _instance._animator = value;  }
+        get => _instance._animator;
+        set => _instance._animator = value;
     }
     
     // Singleton object of the Player class.
     private static Player _instance;
     
     // Checks if an enemy has entered the immunity frame region.
-    public static bool HasEnteredImmunityFramesRegion { get; set; } = false;
-    
+    public static bool HasEnteredImmunityFramesRegion { get; set; }
+
     private Playable _playable;
+    public static Playable ChosenClass
+    {
+        get => _instance._playable;
+        private set
+        {
+            _instance.Health = _instance._maxHealth = value.BaseHealth;
+            _instance._playable = value;
+        }
+    }
 
-    public static Playable ChosenClass {get => _instance._playable; private set {
-        _instance.Health = _instance._maxHealth = value.BaseHealth;
-        _instance._playable = value;
-        }}
-
-    private int _highscore;
+    private int _highScore;
     
     public static int HighScore
     {
-        get => _highscore;
+        get => _instance._highScore;
         private set 
         {
             if (IsNewHighScore(value)) 
-                _highscore = value;
+                _instance._highScore = value;
         }
     }
 
@@ -69,15 +72,7 @@ public class Player
         set;
     }
 
-    public static float GetImmunityFrameTimer
-    {
-        get
-        {
-            if (_instance._abilities[0])
-                return 2f;
-            return 1f;
-        }
-    }
+    public static float GetImmunityFrameTimer => _instance._abilities[0] ? 2f : 1f;
 
     public static int GetLuckyDiceRoll
     {
@@ -89,132 +84,149 @@ public class Player
         }
     }
 
-    public static float GetProjectileScale
-    {
-        get
-        {
-            if (_instance._abilities[2])
-                return 1.5f;
-            return 1f;
-        }
-    }
+    public static float GetProjectileScale => _instance._abilities[2] ? 1.5f : 1f;
 
-    private readonly bool[] _abilities = new[] { false, false, false };
+    private readonly bool[] _abilities = { false, false, false };
     
     private PlayerData _playerData;
-
-    /// <summary>
-    /// Create the player class.
-    /// </summary>
+    
     private Player() {}
 
+    // Get the only singleton instance of the player.
     public static void FixFields(Playable c, Animator a)
     {
         ChosenClass = c;
         Animator = a;
     }
 
-    public static void Initialize() {
+    public static void Initialize()
+    {
         _instance = new Player();
     }
-
-    public void IncrementHealth()
+    
+    public static void IncrementHealth()
     {
         _instance.Health++;
-        if (_health > _maxHealth)
-            _health = _maxHealth;
+        if (GetHealth > GetMaxHealth)
+            _instance.Health = GetMaxHealth;
     }
-
     public static void Reset()
     {
-        _instance.HighScore = _instance.Score;
-        _instance._playerData.Highscore = _instance.HighScore;
-        _instance.SaveGameToJson();
+        HighScore = Score;
+        _instance._playerData.highScore = HighScore;
+        SaveGameToJson();
         
         _instance = null;
+        Initialize();
+    }
+    public static string DamagePlayer()
+    {
+        _instance.Health--;
+        if (GetHealth <= 0)
+            return "Killed";
+        return "Hit";
     }
 
-    public void DamagePlayer(int dmg)
-    {
-        Debug.Log(_health);
-        _health -= dmg;
-        if (_health <= 0)
-            _animator.SetTrigger("Killed");
-    }
-
-    public void SaveGameToJson()
+    public static void SaveGameToJson()
     {
 
-        string json = JsonUtility.ToJson(_playerData);
+        string json = JsonUtility.ToJson(_instance._playerData);
         
-        Debug.Log($"{json}");
         using StreamWriter sw = new StreamWriter(Constants.Path);
         sw.WriteLine(json);
-            /*sw.Close();*/
-        
-
     }
 
-    public bool IsNewHighScore(int score)
+    private void ObtainData()
     {
-        return score >= _highscore;
+        try
+        {
+            // https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/language-compilers/read-write-text-file#write-a-text-file-example-1
+            // https://docs.unity3d.com/Manual/JSONSerialization.html
+            // https://docs.unity3d.com/ScriptReference/JsonUtility.FromJson.html
+            // https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory?view=net-8.0#system-io-directory-createdirectory(system-string)
+            using StreamReader sr = new StreamReader(Constants.Path);
+            var line = sr.ReadToEnd();
+            _playerData = JsonUtility.FromJson<PlayerData>(line);
+            _highScore = _playerData.highScore;
+        }
+        catch (Exception ex)
+        {
+            if (ex is FileNotFoundException or DirectoryNotFoundException)
+            {
+                Directory.CreateDirectory(".\\Data");
+                _playerData = new PlayerData();
+                SaveGameToJson();    
+            }
+            
+        }
     }
 
-    public void ModifyFlag(string dataName, bool status)
+    public static bool IsNewHighScore(int score)
+    {
+        return score >= HighScore;
+    }
+
+    public static void ModifyFlag(string dataName, bool status)
     {
         switch (dataName)
         {
             case "IFrames":
             {
-                abilities[0] = status;
+                _instance._abilities[0] = status;
                 break;
             }
             case "LDice":
             {
-                abilities[1] = status;
+                _instance._abilities[1] = status;
                 break;
             }
             case "BProjectile":
             {
-                abilities[2] = status;
+                _instance._abilities[2] = status;
                 break;
             }
         }
     }
 
-    public bool GetFlag(string dataName)
+    public static bool GetFlag(string dataName)
     {
         switch (dataName)
         {
-            case "IFrames": return abilities[0];
-            case "LDice": return abilities[1];
-            case "BProjectile": return abilities[2];
+            case "IFrames": return _instance._abilities[0];
+            case "LDice": return _instance._abilities[1];
+            case "BProjectile": return _instance._abilities[2];
             default: return false;
         }
     }
 
-    public float GetBGMusicVolume()
+    public static float GetBgMusicVolume()
     {
-        return _playerData.BGMusicVolume;
+        if (_instance.IsUnityNull())
+            Initialize();
+        if (_instance._playerData.IsUnityNull())
+            _instance.ObtainData();
+        return _instance._playerData.bgMusicVolume;
     }
 
-    public float GetSFXVolume()
+    public static float GetSfxVolume()
     {
-        return _playerData.SFXVolume;
+        if (_instance._playerData.IsUnityNull())
+            _instance.ObtainData();
+        return _instance._playerData.sfxVolume;
     }
 
-    public void SetVolume(string type, float value)
+    public static void SetVolume(string type, float value)
     {
         switch (type)
         {
             case "Music":
             {
-                _playerData.BGMusicVolume = value;
+                _instance._playerData.bgMusicVolume = value;
                 break;
             }
             case "SFX":
             {
-                _playerData.SFXVolume = value;
+                _instance._playerData.sfxVolume = value;
                 break;
             }
         }

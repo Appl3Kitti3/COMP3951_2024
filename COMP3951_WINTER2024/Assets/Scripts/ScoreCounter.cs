@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class ScoreCounter : MonoBehaviour
 {
@@ -19,6 +15,6 @@ public class ScoreCounter : MonoBehaviour
 
     private void Update()
     {
-        _text.text = $"{_stringTemplate}\n{Player.GetInstance().Score}";
+        _text.text = $"{_stringTemplate}\n{Player.Score}";
     }
 }

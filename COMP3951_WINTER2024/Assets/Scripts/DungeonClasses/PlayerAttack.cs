@@ -1,11 +1,5 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
-
 // TODO make this into controller
 
 
@@ -14,7 +8,7 @@ using Debug = UnityEngine.Debug;
 ///     Player class is a singleton that represents the current stats of the player. (Damage, Health.)
 ///         It will have a weapon class to represent its weapon and its playable class to dynamically link
 ///         and switch to what class should be playing.
-/// Author: Teddy Dumam-Ag A01329707
+/// Author: 
 /// Date: March 6 2024 (Created around February)
 /// Sources: Applied C# and OOP skills.
 ///
@@ -31,83 +25,86 @@ using Debug = UnityEngine.Debug;
 ///     https://www.c-sharpcorner.com/UploadFile/80ae1e/canceling-a-running-task/
 ///
 /// </summary>
-partial class PlayerController : MonoBehaviour
+partial class PlayerController
 {
     bool isFirstUltProjectile = true;
 
-    private GameObject projectile;
+    private GameObject _projectile;
 
-    private Vector2 originalProjectileScale;
+    private Vector2 _originalProjectileScale;
 
-    [SerializeField] private string projectile_type;
+    [SerializeField] private string projectileType;
 
     [SerializeField] private float timeBetweenProjectiles;
 
+    [Header("Time Based Attacks")] 
+    
+    [SerializeField] private float timeDuringUltimateSeconds;
+
+    [SerializeField] private float ultimateCooldown;
     private WaitForSeconds _creationDelay;
 
     private bool _isElapsed;
+    
+    private bool _isCooldownDone = true;
+
+    private bool _hasUltimateActive;
+    private static readonly int Primary = Animator.StringToHash("Primary");
+    private static readonly int Ultimate = Animator.StringToHash("Ultimate");
+
     void CreateProjectile()
     {
         var currTransform = transform;
-        var clone = Instantiate(projectile, currTransform.position, Quaternion.identity);
-
+        var clone = Instantiate(_projectile, currTransform.position, Quaternion.identity);
         clone.GetComponent<Projectile>().ParentObject = gameObject;
         clone.GetComponent<SpriteRenderer>().enabled = true;
         clone.SetActive(true);
     }
     void EnablePrimary()
     {
-        Player.GetInstance().Animator.SetBool("Primary", true);
-        if (projectile_type.Equals("Primary"))
+        Player.Animator.SetBool(Primary, true);
+        if (projectileType.Equals("Primary"))
         {
             _isElapsed = true;
             StartCoroutine(CreateMultipleProjectiles());
         }
         else
-            stationaryHitBox.SetActive(true);
+            _nonProjectileHitBox.SetActive(true);
         
     }
 
     void DisablePrimary()
     {
-        Player.GetInstance().Animator.SetBool("Primary", false);
-        if (projectile_type.Equals("Primary"))
+        Player.Animator.SetBool(Primary, false);
+        if (projectileType.Equals("Primary"))
             _isElapsed = false;
         else
-            stationaryHitBox.SetActive(false);
+            _nonProjectileHitBox.SetActive(false);
     }
     
     void EnableUltimate()
     {
-        if (_isCooldownDone) {
-            Player.GetInstance().Animator.SetBool("Ultimate", true);
-            /*Debug.Log("Ultimate is at Go!");*/
-            if (projectile_type.Equals("Ultimate"))
-            {
-                _isElapsed = true;
-                StartCoroutine(CreateMultipleProjectiles());
-            }
-            else
-            {
-                stationaryHitBox.SetActive(true);
-            }
-            StartCoroutine(StartUltimateElapsed());
-            // wait for above thread to join
-            // DisableUltimate();
-            // DisableUltimate() waits for its thread to join
-            // method execution ends
+        Player.Animator.SetBool(Ultimate, true);
+        if (projectileType.Equals("Ultimate"))
+        {
+            _isElapsed = true;
+            StartCoroutine(CreateMultipleProjectiles());
         }
+        else
+        {
+            _nonProjectileHitBox.SetActive(true);
+        }
+        StartCoroutine(StartUltimateElapsed());
     }
 
     void DisableUltimate()
     {
-        Player.GetInstance().Animator.SetBool("Ultimate", false);
-        Debug.Log("Ultimate has stopped");
-        if (projectile_type.Equals("Ultimate"))
+        Player.Animator.SetBool(Ultimate, false);
+        if (projectileType.Equals("Ultimate"))
             _isElapsed = false;
         else
         {
-            stationaryHitBox.SetActive(false);
+            _nonProjectileHitBox.SetActive(false);
         }
         _hasUltimateActive = false;
         StartCoroutine(StartCooldown());
@@ -147,7 +144,7 @@ partial class PlayerController : MonoBehaviour
     
     void ModifyProjectile()
     {
-        float tmpScale = Player.GetInstance().GetProjectileScale;
-        projectile.transform.localScale = originalProjectileScale * tmpScale;
+        float tmpScale = Player.GetProjectileScale;
+        _projectile.transform.localScale = _originalProjectileScale * tmpScale;
     }
 }

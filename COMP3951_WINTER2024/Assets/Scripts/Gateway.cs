@@ -1,17 +1,13 @@
-using System;
 using System.Collections;
-using System.Linq;
-using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Random = UnityEngine.Random;
 
 /// <summary>
 /// Description:
 ///     Gateways are portals that switches the current scene to the next. Whenever a player enters the region, it teleports them
 ///         into a new scene.
-/// Author: Teddy Dumam-Ag A01329707
+/// Author: 
 /// Date: March 5 2024
 /// Sources:
 ///
@@ -33,28 +29,30 @@ using Random = UnityEngine.Random;
 ///     https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.MoveGameObjectToScene.html
 ///
 /// </summary>
-public class Gateway : MonoBehaviour
+public abstract class Gateway : MonoBehaviour
 {
     private bool _isRendering;
 
-    protected GameObject[] movableGameObj;
+    protected GameObject[] MovableGameObj;
 
-    private int nextScene;
+    private int _nextScene;
+    private GameObject _player;
+    private GameObject _hud;
+
     private void Start()
     {
-        movableGameObj = GetMovableObjects();
+        MovableGameObj = GetMovableObjects();
     }
-    
 
-    protected virtual GameObject[] GetMovableObjects()
+
+    private static GameObject[] GetMovableObjects()
     {
-        return new[]
+        return new GameObject[]
         {
             GameObject.FindWithTag("HUD"),
             GameObject.FindWithTag("Player"),
             GameObject.FindWithTag("CrossHair"), 
-            GameObject.FindWithTag("MainCamera"),
-            null
+            GameObject.FindWithTag("MainCamera")
         };
     }
 
@@ -74,15 +72,15 @@ public class Gateway : MonoBehaviour
     // Loads the scene switching logic.
     private IEnumerator LoadSceneAsync()
     {
-        if (movableGameObj[1].IsUnityNull())
-            movableGameObj[1] = GameObject.FindWithTag("Player");
-        if (movableGameObj[0].IsUnityNull())
-            movableGameObj[0] = GameObject.FindWithTag("HUD");
+        if (MovableGameObj[1].IsUnityNull())
+            MovableGameObj[1] = GameObject.FindWithTag("Player");
+        if (MovableGameObj[0].IsUnityNull())
+            MovableGameObj[0] = GameObject.FindWithTag("HUD");
         Scene currentScene = SceneManager.GetActiveScene();
 
         // Load Scene
-        nextScene = GetNextScene();
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
+        _nextScene = GetNextScene();
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_nextScene, LoadSceneMode.Additive);
         
         // While not done
         while (!asyncLoad.isDone)
@@ -104,8 +102,9 @@ public class Gateway : MonoBehaviour
 
     protected virtual void PerformMove()
     {
-        MoveObjectsToScene(nextScene, movableGameObj);   
+        MoveObjectsToScene(_nextScene, MovableGameObj);   
     }
+
     public static void MoveObjectsToScene(int index, GameObject[] objs)
     {
         Scene nextScene = SceneManager.GetSceneByBuildIndex(index);
@@ -114,7 +113,7 @@ public class Gateway : MonoBehaviour
 
     public static void MoveObjectsToScene(Scene nextScene, GameObject[] objs)
     {
-        foreach (var gObject in objs)
+        foreach (GameObject gObject in objs)
         {
             if (!gObject.IsUnityNull())
                 SceneManager.MoveGameObjectToScene(gObject, nextScene);
@@ -123,10 +122,6 @@ public class Gateway : MonoBehaviour
 
     protected virtual void PerformTransitionTask()
     {}
-    protected virtual int GetNextScene()
-    {
-        // Start from 6.
-        /*Random.Range(6, 8);*/
-        return 6;
-    }
+
+    protected abstract int GetNextScene();
 }

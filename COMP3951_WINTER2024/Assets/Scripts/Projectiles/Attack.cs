@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -20,7 +17,7 @@ public abstract class Attack : MonoBehaviour
 
     protected virtual int GetAttackTypeDamage()
     {
-        return Player.GetInstance().ChosenClass.Weapon.PerformAttackType();
+        return Player.ChosenClass.Weapon.PerformAttackType();
     }
     private void OnTriggerStay2D(Collider2D other)
     {
@@ -41,7 +38,7 @@ public abstract class Attack : MonoBehaviour
         {
             SetUpForce(other);
             Creature c = ParentObject.GetComponent<Creature>();
-            other.GetComponent<PlayerController>().InflictDamage(c.Damage, c.Animator);
+            other.GetComponent<PlayerController>().InflictDamage(c.Animator);
             
         }
         

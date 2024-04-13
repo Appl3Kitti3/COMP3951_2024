@@ -7,7 +7,7 @@
         {
             Weapon = new Staff();
         }
-
+        
         public override string Name => "Mage";
 
         public override int BaseHealth => Constants.MaximumHealth;
