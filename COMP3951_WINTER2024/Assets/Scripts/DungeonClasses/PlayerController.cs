@@ -1,25 +1,33 @@
 using System.Collections;
 using UnityEngine;
 
-// TODO: Merges PlayerAttack.cs and PlayerMovement.cs
-// No long comments here because it is not finished and ready for use
+/// <summary>
+/// God Function. Controls the Player's MonoBehaviour.
+/// 
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 12 2024
+/// Source: Applied C# Skills
+/// </summary>
 public partial class PlayerController : MonoBehaviour
 {
     [Header("Player Data")] 
-    
-    // Holds Weapon
-    // Weapon holds base damage
-
+    // Rigid Body of the player.
     private Rigidbody2D _rigid;
 
+    // Animator of the player.
     private Animator _animator;
 
+    // Used to identify direction.
     private Vector2 _directedMovement;
 
+    // The Boundaries or the Ability hit box.
     private GameObject _nonProjectileHitBox;
 
-    
-    void Init()
+    // Sounds that need to be played for performed actions.
+    private AudioSource[] _sounds;
+
+    // Init Call. Set the variables.
+    private void Init()
     {
         _rigid = gameObject.GetComponent<Rigidbody2D>();
         _animator = gameObject.GetComponent<Animator>();
@@ -28,10 +36,10 @@ public partial class PlayerController : MonoBehaviour
         _projectile = transform.GetChild(1).gameObject;
 
         _originalProjectileScale = _projectile.transform.localScale;
-
-
+        _sounds = GetComponents<AudioSource>();
     }
     
+    // Called when object is instantiated.
     private void Awake()
     {
         _creationDelay = new WaitForSeconds(timeBetweenProjectiles);
@@ -39,22 +47,21 @@ public partial class PlayerController : MonoBehaviour
     }
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        /*Vector2 playerSpawn = GameObject.FindGameObjectWithTag("InitialPosition").GetComponent<Transform>().position;
-        transform.position = playerSpawn;*/
         Player.Animator = _animator;
+        if (Player.ChosenClass.Name.Equals("Melee"))
+            _meleeWaitForSeconds = new WaitForSeconds(1);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
         GetAxisPositionValues();
         HandleAttacks();
     }
 
-    void HandleAttacks()
+    private void HandleAttacks()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -63,50 +70,50 @@ public partial class PlayerController : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
             DisablePrimary();
-        
-        if (Input.GetMouseButtonDown(1))
-            if (_isCooldownDone)
-                EnableUltimate();
-        
-        // When the player exceeds the ultimate ability duration
-        // stop the ability
-        // Todo: Text or call noah because the cool down is actually broken
-        /*if (_counter >= ultimateCooldown)
-            DisableUltimate();*/
-        // Todo: Add another coroutine that does the time duration
-        // once clicking on right button, start coroutine
-        // where sets a boolean so multiple instances wont be created at once
-        // then let that coroutine wait for seconds
-        // and have another boolean that checks if it is false, then stop the ultimate
+
+        if (!Input.GetMouseButtonDown(1)) return;
+        if (_isCooldownDone)
+            EnableUltimate();
     }
 
+    // Runs in 50 Frames?
     private void FixedUpdate()
     {
         FlipSelf();
         MovePlayer();
     }
 
-    public void InflictDamage(Animator creatureAnimator)
+    /// <summary>
+    /// Inflict damage to the player.
+    /// If player has entered Immunity Frames, return, otherwise continue.
+    /// If player has received lucky dice, they can dodge a hit. Otherwise take the hit.
+    /// </summary>
+    public void InflictDamage()
     {
         if (Player.HasEnteredImmunityFramesRegion)
             return;
-
-        creatureAnimator.SetTrigger(Primary); // change name to attack
-        int diceValue = Player.GetLuckyDiceRoll;
+        
+        var diceValue = Player.GetLuckyDiceRoll;
         switch (diceValue)
         {
             case 1: // player does not get hit but keeps the immunity frame
+            {
+                _sounds[1].Play();
                 break;
+            }
+                
             default: // lose and player does not own Lucky Dice yet
                 
-                gameObject.GetComponent<AudioSource>().Play();
+                _sounds[0].Play();
                 _animator.SetTrigger(Player.DamagePlayer());
                 break;
         }
         
-        StartCoroutine(AttackDelay());
+        StartCoroutine(ImmunityFramesElapsed());
     }
-    IEnumerator AttackDelay()
+
+    // Make Player Enter Immunity Frames Region.
+    private static IEnumerator ImmunityFramesElapsed()
     {
         Player.HasEnteredImmunityFramesRegion = true;
         yield return new WaitForSeconds(Player.GetImmunityFrameTimer);

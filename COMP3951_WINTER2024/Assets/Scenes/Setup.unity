@@ -218,7 +218,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 10
+  m_LinearDrag: 15
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -319,6 +319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   force: 15
   projectileType: primary-projectile
+  rangeFloat: 110
 --- !u!82 &200741924
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1551,6 +1552,7 @@ MonoBehaviour:
   - {fileID: 9065412832863091779}
   - {fileID: 5960146950599834354}
   - {fileID: 572364268957818707}
+  cards: []
 --- !u!20 &1298019531 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6988507651933732352, guid: 42fb83458a3f2f5499ae8b971193f773, type: 3}
@@ -2057,8 +2059,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 10
+  m_Mass: 0.5
+  m_LinearDrag: 5
   m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -2150,8 +2152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd7cc9e78a479d4b86c95485bd98721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 8
+  force: 5
   projectileType: primary-projectile
+  rangeFloat: 30
 --- !u!82 &1451394549
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3428,11 +3431,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1727374693576819678, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
       propertyPath: ultimateCooldown
-      value: 3
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1727374693576819678, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
       propertyPath: timeBetweenProjectiles
-      value: 1
+      value: 0.95
       objectReference: {fileID: 0}
     - target: {fileID: 1727374693576819678, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
       propertyPath: timeDuringUltimateSeconds
@@ -3521,6 +3524,22 @@ PrefabInstance:
     - target: {fileID: 5964371856713356221, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
       propertyPath: m_LocalPosition.y
       value: -27.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964077214272916064, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
+      propertyPath: force
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964077214272916064, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
+      propertyPath: rangeFloat
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7843851040221606827, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
+      propertyPath: m_Mass
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7843851040221606827, guid: b1ae0c582d0e64149a3acf8d0c3d562a, type: 3}
+      propertyPath: m_LinearDrag
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3814,9 +3833,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileType: Primary
-  timeBetweenProjectiles: 2
+  timeBetweenProjectiles: 0.5
   timeDuringUltimateSeconds: 5
-  ultimateCooldown: 5
+  ultimateCooldown: 60
 --- !u!224 &5100406335192794814
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4327,9 +4346,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileType: Primary
-  timeBetweenProjectiles: 2
-  timeDuringUltimateSeconds: 30
-  ultimateCooldown: 60
+  timeBetweenProjectiles: 0.5
+  timeDuringUltimateSeconds: 10
+  ultimateCooldown: 45
 --- !u!1001 &7251956747924148919
 PrefabInstance:
   m_ObjectHideFlags: 0

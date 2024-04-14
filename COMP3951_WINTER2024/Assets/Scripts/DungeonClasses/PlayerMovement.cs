@@ -3,8 +3,8 @@ using UnityEngine;
 /// <summary>
 /// Description:
 ///     Partial class of PlayerController. Represents the movement functions of the player.
-/// Author: 
-/// Date: April 2 2024
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 2 2024 (Revision 04/12/2024)
 /// Sources:
 ///
 ///     Tutorial on 2D Top Down movement.
@@ -21,29 +21,36 @@ using UnityEngine;
 /// </summary>
 partial class PlayerController
 {
+    // Gets the id name of the speed parameter of its animator
     private static readonly int Speed = Animator.StringToHash("Speed");
 
-    void GetAxisPositionValues()
+    // Gets the speed of the player. If player does not have an ultimate active, get its normal speed, otherwise return the reduced ultimate speed.
+    private int GetSpeed => _hasUltimateActive ? Player.GetUltSpeed : Player.GetSpeed;
+
+    /// <summary>
+    /// Sets the animator speed parameter of the players x and y input direction.
+    /// </summary>
+    private void GetAxisPositionValues()
     {
         // Move logic of the player.
         _directedMovement.x = Input.GetAxisRaw("Horizontal");
         _directedMovement.y = Input.GetAxisRaw("Vertical");
         _animator.SetFloat(Speed, _directedMovement.sqrMagnitude);
     }
-    
-    void FlipSelf()
+
+    // Flip the player, based on their movement.
+    private void FlipSelf()
     {
         // Flip image
-        if (_directedMovement.x < 0)
-            gameObject.transform.localScale = new Vector3(-1, 1, 1);
-        else if (_directedMovement.x > 0)
-            gameObject.transform.localScale = new Vector3(1, 1, 1);
+        if ((int)_directedMovement.x != 0)
+            transform.localScale = Utility.GetInverseScale(transform.localScale, (int)_directedMovement.x);
     }
-    
-    void MovePlayer()
+
+    // Calculation of moving the player.
+    private void MovePlayer()
     {
         // Player movement
         _rigid.MovePosition(_rigid.position + 
-                            _directedMovement * (Player.ChosenClass.GetSpeed() * Time.deltaTime));
+                            _directedMovement * (GetSpeed * Time.deltaTime));
     }
 }

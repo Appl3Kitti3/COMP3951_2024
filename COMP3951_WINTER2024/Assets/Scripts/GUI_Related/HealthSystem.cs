@@ -14,8 +14,8 @@ using UnityEngine.UI;
 public class HealthSystem : MonoBehaviour
 {
     
-
     // Amount of heart sprites in the system
+    [SerializeField]
     public Image[] hearts;
 
     // Called at the beginning of the frame once this is created.
@@ -32,7 +32,6 @@ public class HealthSystem : MonoBehaviour
         for (var i = 0; i < hearts.Length; i++)
         {
             hearts[i].color = i < health ? Color.red : Color.blue;
-
             hearts[i].enabled = i < maxHealth;
         }
     }

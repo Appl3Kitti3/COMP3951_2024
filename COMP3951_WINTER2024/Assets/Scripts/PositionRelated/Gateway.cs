@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 ///     Gateways are portals that switches the current scene to the next. Whenever a player enters the region, it teleports them
 ///         into a new scene.
 /// Author: 
-/// Date: March 5 2024
+/// Date: March 5 2024 (Revision 04/13/2024)
 /// Sources:
 ///
 ///     Discovery of trigger property.
@@ -31,20 +31,20 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public abstract class Gateway : MonoBehaviour
 {
-    private bool _isRendering;
-
+    // All the game objects that needs to be moved in every scene switch.
     protected GameObject[] MovableGameObj;
 
+    // The build index of the next scene.
     private int _nextScene;
-    private GameObject _player;
-    private GameObject _hud;
 
+    // Called on first frame. Assign the movable objects.
     private void Start()
     {
         MovableGameObj = GetMovableObjects();
     }
 
 
+    // Get the game objects to be moved.
     private static GameObject[] GetMovableObjects()
     {
         return new GameObject[]
@@ -59,12 +59,15 @@ public abstract class Gateway : MonoBehaviour
     // Called once the player enters the region of the gateway.
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // This is only meant for Player game objects.
         if (!other.gameObject.CompareTag("Player"))
             return;
-            
+        
+        // Level up player (See RoomGateway.cs)
         PerformTransitionTask();
+        
+        // Start the switch.
         StartCoroutine(LoadSceneAsync());
-        // unload scene asnyc
         
         
     }
@@ -72,46 +75,61 @@ public abstract class Gateway : MonoBehaviour
     // Loads the scene switching logic.
     private IEnumerator LoadSceneAsync()
     {
+        // Usually, this is checking the case at the first Gateway in the lobby menu where the HUD and Player is still being chosen by the user.
         if (MovableGameObj[1].IsUnityNull())
             MovableGameObj[1] = GameObject.FindWithTag("Player");
         if (MovableGameObj[0].IsUnityNull())
             MovableGameObj[0] = GameObject.FindWithTag("HUD");
-        Scene currentScene = SceneManager.GetActiveScene();
+        
+        // Get current active scene.
+        var currentScene = SceneManager.GetActiveScene();
 
         // Load Scene
         _nextScene = GetNextScene();
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_nextScene, LoadSceneMode.Additive);
+        var asyncLoad = SceneManager.LoadSceneAsync(_nextScene, LoadSceneMode.Additive);
         
         // While not done
         while (!asyncLoad.isDone)
             yield return null;
         
-        
-        // TODO: Future plan, move player class to the Player Game Object.
+        // Moves game object to the next scene.
         PerformMove();
-        /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("MainCamera"), nextScene);*/
-        /*SceneManager.MoveGameObjectToScene(GameObject.FindGameObjectWithTag("BackgroundSystems"), nextScene);*/
-        
         
         SceneManager.UnloadSceneAsync(currentScene);
         
 
     }
 
-
-
+    /// <summary>
+    /// <p>Moves the current movable game objects into the next scene.
+    /// </p>
+    /// <see cref="RoomGateway"/> for its overriden functionality.
+    /// </summary>
+    /// 
     protected virtual void PerformMove()
     {
         MoveObjectsToScene(_nextScene, MovableGameObj);   
     }
 
+    /// <summary>
+    /// Overloaded function for moving the game objects into a scene.
+    /// Index is the build index number.
+    /// </summary>
+    /// <param name="index">Build index of the scene. Identified by Unity's build settings.</param>
+    /// <param name="objs">Game objects to be moved.</param>
     public static void MoveObjectsToScene(int index, GameObject[] objs)
     {
         Scene nextScene = SceneManager.GetSceneByBuildIndex(index);
         MoveObjectsToScene(nextScene, objs);
     }
 
-    public static void MoveObjectsToScene(Scene nextScene, GameObject[] objs)
+    /// <summary>
+    /// Overloaded function for moving the game objects into a scene.
+    /// Scene is the next scene to be used ot move the objects to.
+    /// </summary>
+    /// <param name="nextScene">Scene type, the next scene.</param>
+    /// <param name="objs">The game objects that need to be moved.</param>
+    protected static void MoveObjectsToScene(Scene nextScene, GameObject[] objs)
     {
         foreach (GameObject gObject in objs)
         {
@@ -120,8 +138,15 @@ public abstract class Gateway : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Only uses RoomGateway's functionality. Increments the player level.
+    /// </summary>
     protected virtual void PerformTransitionTask()
     {}
 
+    /// <summary>
+    /// Returns the build index of the next scene.
+    /// </summary>
+    /// <returns>As an integer, the build index of the next scene.</returns>
     protected abstract int GetNextScene();
 }

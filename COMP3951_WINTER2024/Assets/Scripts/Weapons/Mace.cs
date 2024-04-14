@@ -1,5 +1,12 @@
+/// <summary>
+///     Mace is used for the Melee. Has its own base damage.
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 13 2024
+/// Source: Applied C# and Unity Skills
+/// </summary>
 public class Mace : Weapon
 {
+    // Construct a Mace.
     public Mace()
     {
         BaseDamage = Constants.BaseMace;

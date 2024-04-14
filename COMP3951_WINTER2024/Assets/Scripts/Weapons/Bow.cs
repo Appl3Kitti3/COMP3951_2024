@@ -1,5 +1,12 @@
+/// <summary>
+///     Bow is used for the Archer, gets the base damage on the constants.
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 13 2024
+/// Source: Applied C# and Unity Skills
+/// </summary>
 public class Bow : Weapon
 {
+    // Construct a Bow.
     public Bow()
     {
         BaseDamage = Constants.BaseBow;

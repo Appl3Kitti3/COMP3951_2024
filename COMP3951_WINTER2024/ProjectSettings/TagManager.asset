@@ -12,6 +12,7 @@ TagManager:
   - CrossHair
   - BackgroundSystems
   - Gateway
+  - Structure
   layers:
   - Default
   - TransparentFX

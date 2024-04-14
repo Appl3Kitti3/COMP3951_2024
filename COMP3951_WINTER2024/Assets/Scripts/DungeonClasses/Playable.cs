@@ -4,30 +4,25 @@
     /// Description:
     ///     An abstract class that represents a playable class that a player can select.
     ///     [Melee, Mage, Archer]
-    /// Author: 
+    /// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+    /// Date: April 12 2024
     /// Source: Applied C# Skills
     /// </summary>
     public abstract class Playable
     {
+        // Name of the class.
         public abstract string Name { get; }
 
-        public abstract int BaseHealth {get;}
+        // Base Health points.
+        public abstract int BaseHealth { get; }
         
-        // Move speed of the player
-        protected int MoveSpeed { get; }
-
-        public int UltMoveSpeed {get; set;}
-
-        public Weapon Weapon { get; set; }
-
-        protected Playable(int speed)
-        {
-            MoveSpeed = speed;
-        }
-        // Returns a basic value of the move speed.
+        // Property of its Weapon.
+        public Weapon Weapon { get; protected set; }
+        
+        // Returns a calculation of its regular speed.
         public abstract int GetSpeed();
 
-        public abstract int GetUltSpeed();
-        
+        // Returns a calculation of its ultimate speed.
+        public abstract int GetUltimateSpeed();
     }
 }

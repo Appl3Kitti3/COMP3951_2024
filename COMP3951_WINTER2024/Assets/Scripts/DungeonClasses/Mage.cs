@@ -1,9 +1,16 @@
 ﻿namespace EndlessCatacombs
 {
-    // Inherits from Playable class
+    /// <summary>
+    /// Description:
+    ///     Mage uses a staff and five maximum health.
+    /// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+    /// Date: April 12 2024
+    /// Source: Applied C# and Unity Skills
+    /// </summary>
     public class Mage : Playable
     {
-        public Mage(int speed) : base(speed)
+        // Create a Mage.
+        public Mage()
         {
             Weapon = new Staff();
         }
@@ -14,11 +21,13 @@
 
         public override int GetSpeed()
         {
-            return (MoveSpeed / 2);
+            const int tmpSpeed = Constants.MageSpeed;
+            return tmpSpeed * 2/3;
         }
 
-        public override int GetUltSpeed() {
-            return (UltMoveSpeed / 2);
+        public override int GetUltimateSpeed()
+        {
+            return Constants.MageUltSpeed + 2;
         }
     }
 }
