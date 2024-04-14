@@ -1,12 +1,15 @@
-using UnityEngine;
-
+/// <summary>
+///     Necro's ability rejuvenates 15% of its max health.
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 13 2024
+/// Source: Applied C# and Unity Skills
+/// </summary>
 public class RegenerationAbility : PassiveAbility
 {
     protected override void PerformAbility()
     {
-        var c = transform.parent.gameObject.GetComponent<Creature>();
-        if (c.Health == c.MaxHealth)
+        if (BossCreature.Health == BossCreature.MaxHealth)
             return;
-        c.Health += (int) (c.MaxHealth * (3d / 20));
+        BossCreature.Health += (int) (BossCreature.MaxHealth * (3d / 20));
     }
 }

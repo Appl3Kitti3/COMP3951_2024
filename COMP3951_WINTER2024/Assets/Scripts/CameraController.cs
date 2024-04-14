@@ -1,13 +1,12 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-
 /// <summary>
 /// The Camera Controller is used to follow the player's
 /// object. Dynamically moves with the player.
 /// 
 /// Author: Teddy Dumam-Ag A01329707
-/// Date: March 5 2024 (Created around February)
+/// Date: March 5 2024 (Revision April 13 2024)
 /// Source:
 ///
 ///     Camera Follow Player
@@ -34,6 +33,7 @@ public class CameraController : MonoBehaviour
         _camera = GetComponent<Camera>();
     }
 
+    // Called every frame
     void Update()
     {
         // Gets a crosshair and it follows based on the mouse position

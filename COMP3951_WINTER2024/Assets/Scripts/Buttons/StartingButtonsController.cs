@@ -3,57 +3,55 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Description:
-///     Player class is a singleton that represents the current stats of the player. (Damage, Health.)
-///         It will have a weapon class to represent its weapon and its playable class to dynamically link
-///         and switch to what class should be playing.
-/// Author: 
+/// Called on the very start of the game. Represents the functionality and logic of the
+/// class picker.
+/// 
+/// Author: Tedrik "Teddy" Dumam-Ag 
 /// Date: March 27 2024
 /// Sources: Applied C# and OOP skills.
 ///
 /// </summary>
 public class StartingButtonsController : MonoBehaviour
 {
-    // The three classes 
-    public GameObject[] players;
+    // This is serialized so it can be organized and sorted by (Melee, Archer, and Mage)
+    [SerializeField] private GameObject[] players;
     
-    // The cards to pick
-    private GameObject[] _cards;
+    // The buttons that represent the class picker.
+    [SerializeField] private GameObject[] cards;
     
     // The GUI used for play button and cards
     private GameObject _gui;
-    
-    
+
+    private enum ClassIndex
+    {
+        Melee = 0,
+        Archer = 1,
+        Mage = 2
+    }
     // Called when created
     private void Awake()
     {
-        // Set GUI, players list, and cards to false
+        // Initially set GUI, players list, and cards to false
         _gui = GameObject.Find("GUI");
         _gui.SetActive(false);
-        foreach (var v in players)
-            v.SetActive(false);
-        _cards = GameObject.FindGameObjectsWithTag("CharacterPicker");
-        foreach (var v in _cards)
-            v.SetActive(false);
     }
     
     // Used for play button onClick
     public void PlayButton(GameObject sender)
     {
-        // Disable this button and enable all the cards
+        // Disable the play button display and enable the cards
         sender.SetActive(false);
-        foreach (var v in _cards)
-            v.SetActive(true);
+        foreach (var card in cards)
+            card.SetActive(true);
     }
     
-    // OnClick picking the first card
+    // OnClick function for Melee Picker
     public void PickMelee()
     {
         // Enable Melee player gameObject
-        players[0].SetActive(true);
-        SetInstanceData(players[0], new Melee(Constants.MeleeSpeed));
+        players[(int)ClassIndex.Melee].SetActive(true);
+        AssignPlayerComponents(players[(int)ClassIndex.Melee], new Melee());
         // Make MainCamera player gameObject to be this class
-        ChangePlayer(players[0]);
         
         // Disable this starting buttons GUI
         CloseChoice();
@@ -62,58 +60,62 @@ public class StartingButtonsController : MonoBehaviour
     // OnClick picking the second card
     public void PickArcher()
     {
-        players[1].SetActive(true);
-        SetInstanceData(players[1], new Archer(Constants.ArcherSpeed));
-        ChangePlayer(players[1]);
+        players[(int)ClassIndex.Archer].SetActive(true);
+        AssignPlayerComponents(players[(int)ClassIndex.Archer], new Archer());
         CloseChoice();
     }
 
     // OnClick picking the third card
     public void PickMage()
     {
-        players[2].SetActive(true);
-        SetInstanceData(players[2], new Mage(Constants.MageSpeed));
-        ChangePlayer(players[2]);
+        players[(int)ClassIndex.Mage].SetActive(true);
+        AssignPlayerComponents(players[(int)ClassIndex.Mage], new Mage());
         CloseChoice();
     }
 
-    void SetInstanceData(GameObject player, Playable c)
+    // Make Camera player gameObject to the chosen class
+    private static void AssignPlayerComponents(GameObject player, Playable c)
     {
         Player.FixFields(c, player.GetComponent<Animator>());
-
+        ChangePlayer(player);
     }
-    // Make Camera player gameObject to the chosen class
-    private void ChangePlayer(GameObject o)
+    
+    // Assign chosen player GameObject to the camera so it can follow it
+    private static void ChangePlayer(GameObject o /* Assuming o is player*/)
     {
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().target = o.transform;
     }
 
-    // Close this GUI
+    // Operates the process after setting up camera and player data. Close GUI and move necessary objects to lobby.
     private void CloseChoice()
     {
+        // Remove all the inactive player tagged GameObjects to prevent performance overloading.
         foreach (var player in players)
-        {
             if (!player.activeInHierarchy)
                 Destroy(player);
-        }
+        
+        // Set the setup canvas active to false.
         GameObject.Find("StartingButtons").SetActive(false);
+        
+        // Finally, set GUI to true.
         _gui.SetActive(true);
 
-        
-        Gateway.MoveObjectsToScene(1,
-        new[]
-        {
-            GameObject.FindWithTag("HUD"),
-            GameObject.FindWithTag("Player"),
-            GameObject.FindWithTag("CrossHair"),
-            GameObject.FindWithTag("MainCamera")
-        }
-            );
 
-        
+        // Move the necessary objects to lobby.
+        Gateway.MoveObjectsToScene(
+            1,
+            new[]
+            {
+                _gui,
+                GameObject.FindWithTag("Player") /* Gets the active player game object. */,
+                GameObject.FindWithTag("CrossHair"),
+                GameObject.FindWithTag("MainCamera")
+            }
+        );
+
+        // Unload this scene.
         SceneManager.UnloadSceneAsync(
             SceneManager.GetSceneByName("Setup")
         );
-        
     }
 }

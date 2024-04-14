@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 29507232}
   m_Layer: 0
   m_Name: Lucky Dice Lock
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4109,7 +4109,7 @@ GameObject:
   - component: {fileID: 312843616}
   m_Layer: 0
   m_Name: Shop PlaceHolders
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6519,7 +6519,7 @@ GameObject:
   - component: {fileID: 1125361460}
   m_Layer: 0
   m_Name: Bigger Projectile Lock
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6927,7 +6927,7 @@ GameObject:
   - component: {fileID: 1265240268}
   m_Layer: 0
   m_Name: Outside Wall
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7889,7 +7889,7 @@ GameObject:
   - component: {fileID: 1270761825}
   m_Layer: 0
   m_Name: Immunity Frames Lock
-  m_TagString: Untagged
+  m_TagString: Structure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -1,23 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Nightfall : Boss
-{
-    private WaitForSeconds _delay = new WaitForSeconds(0.24f);
-    protected override void PerformPrimary()
-    {
-        Projectile.SetActive(true);
-    }
-
-    protected override void BeforeWait()
-    {
-        StartCoroutine(Delay());
-    }
-
-    IEnumerator Delay()
-    {
-        yield return _delay;
-        Projectile.SetActive(false);
-    }
-}
+/// <summary>
+///
+/// Had an original logic plan but they were already covered in the animation state.
+/// I only let this here because it is Unique to Nightfall.
+/// Author: Tedrik "Teddy" Dumam-Ag 
+/// Date: April 12 2024
+/// Sources: Applied C# and OOP skills.
+/// </summary>
+public class Nightfall : Boss {}

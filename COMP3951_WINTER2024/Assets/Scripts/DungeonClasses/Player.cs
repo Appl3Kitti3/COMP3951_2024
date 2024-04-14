@@ -17,7 +17,6 @@ using Random = UnityEngine.Random;
 public class Player
 {
     // Health of the player.
-
     public static int GetHealth => _instance.Health;
     
     private int _maxHealth;
@@ -40,7 +39,12 @@ public class Player
     private static Player _instance;
     
     // Checks if an enemy has entered the immunity frame region.
-    public static bool HasEnteredImmunityFramesRegion { get; set; }
+    private bool hasEnteredIF;
+    public static bool HasEnteredImmunityFramesRegion
+    {
+        get => _instance.hasEnteredIF;
+        set => _instance.hasEnteredIF = value;
+    }
 
     private Playable _playable;
     public static Playable ChosenClass
@@ -53,24 +57,21 @@ public class Player
         }
     }
 
+    public static int GetSpeed => _instance._playable.GetSpeed();
+    
+    public static int GetUltSpeed => _instance._playable.GetUltimateSpeed();
+    
     private int _highScore;
     
-    public static int HighScore
-    {
-        get => _instance._highScore;
-        private set 
-        {
-            if (IsNewHighScore(value)) 
-                _instance._highScore = value;
-        }
-    }
+    public static int HighScore => _instance._highScore;
 
     public static int Level { get; set; } = 1;
 
+    private int _score;
     public static int Score
     {
-        get;
-        set;
+        get => _instance._score;
+        set => _instance._score = value;
     }
 
     public static float GetImmunityFrameTimer => _instance._abilities[0] ? 2f : 1f;
@@ -103,6 +104,7 @@ public class Player
     public static void Initialize()
     {
         _instance = new Player();
+        Level = 1;
     }
     
     public static void IncrementHealth()
@@ -111,10 +113,13 @@ public class Player
         if (GetHealth > GetMaxHealth)
             _instance.Health = GetMaxHealth;
     }
+
+    private void SaveHighScoreData()
+    {
+        _playerData.highScore = _highScore;
+    }
     public static void Reset()
     {
-        HighScore = Score;
-        _instance._playerData.highScore = HighScore;
         SaveGameToJson();
         
         _instance = null;
@@ -123,15 +128,17 @@ public class Player
     public static string DamagePlayer()
     {
         _instance.Health--;
-        if (GetHealth <= 0)
-            return "Killed";
-        return "Hit";
+        return GetHealth <= 0 ? "Killed" : "Hit";
     }
 
     public static void SaveGameToJson()
     {
-
-        string json = JsonUtility.ToJson(_instance._playerData);
+        if (IsNewHighScore())
+            _instance._highScore = Score;
+        
+        _instance.SaveHighScoreData();
+        
+        var json = JsonUtility.ToJson(_instance._playerData);
         
         using StreamWriter sw = new StreamWriter(Constants.Path);
         sw.WriteLine(json);
@@ -162,9 +169,9 @@ public class Player
         }
     }
 
-    public static bool IsNewHighScore(int score)
+    public static bool IsNewHighScore()
     {
-        return score >= HighScore;
+        return _instance._score >= _instance._highScore;
     }
 
     public static void ModifyFlag(string dataName, bool status)

@@ -1,12 +1,12 @@
-using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
 /// Description:
 ///     A creature or the enemy of the game. It has its necessary functions to operate a normal dungeon crawler life cycle.
-/// Author:
-/// Date: March 5 2024 (Created around February)
+/// Author: Tedrik "Teddy" Dumam-Ag (A01329707)
+/// Date: April 12 2024
 /// Sources:
 ///
 ///     Destroy self once an operation is called.
@@ -30,36 +30,31 @@ using UnityEngine;
 ///
 ///     Expression Bodied Members
 ///     https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
-/// 
+///
+///     TryGetComponent
+///     file:///C:/Program%20Files/Unity/Hub/Editor/2022.3.19f1/Editor/Data/Documentation/en/ScriptReference/GameObject.TryGetComponent.html
 /// </summary>
 public partial class Creature : MonoBehaviour
 {
     [Header ("Stats")]
-    
     // The max health of the creature. (Assign this to the current health of the player)
     public int maxHealth;
 
-    public int MaxHealth
-    {
-        get => maxHealth;
-        set => maxHealth = value;
-    }
+    // Property for maxHealth.
+    public int MaxHealth => maxHealth;
+
     // The current defense of the creature.
     public int def;
 
-    // The current damage of the creature.
-    // in Future stand points, this will be the bae damage of the creature, and its true damage
-    // is calculated based on the level and something else.
-
-    public static int Damage => 1;
-
-    [SerializeField] private int points;
+    // Value of the enemy once it is defeated.
+    [SerializeField] 
+    private int points;
     
+    // A property for points.
     public int PointValue => points;
 
     [Header("Creature Configuration")] 
-    // The maximum distance a creature can move towards the player before it goes back to
-    // idle.
+    // The maximum distance a creature can move towards the player before it goes back to idle
     [SerializeField]
     private float maximumDistance;
     
@@ -67,22 +62,28 @@ public partial class Creature : MonoBehaviour
     [SerializeField]
     private float moveSpeed;
 
+    // Property for moveSpeed.
     public float MoveSpeed
     {
         get => moveSpeed;
         set => moveSpeed = value;
     }
+    
     // The animator used to animate the sprite.
     public Animator Animator { get; private set; }
 
-    // TODO: Keep commented code for now.
-    /*private string Name;*/
+    // Used to allow a delay between primary attacks.
+    private bool _attackDelayChecker;
+    
 
-    private int _health;
     // Current health of the creature.
+    private int _health;
+    
+    // Property of _health.
     public int Health
     {
         get => _health;
+        // Automatically set it to max health if value exceed.
         set => _health = value >= maxHealth ? maxHealth : value;
     }
     
@@ -92,13 +93,22 @@ public partial class Creature : MonoBehaviour
     // The direction of the creature facing.
     private Vector2 _direction;
 
+    // Sounds that the creature contains and plays from performed actions.
     private AudioSource[] _sfx;
 
+    // Turns Hit into an integer id.
     private static readonly int Hit = Animator.StringToHash("Hit");
-    private static readonly int Speed = Animator.StringToHash("Speed");
-    private static readonly int Killed = Animator.StringToHash("Killed");
-    private static readonly int Primary = Animator.StringToHash("Primary");
 
+    // Turns Speed into an integer id.
+    private static readonly int Speed = Animator.StringToHash("Speed");
+    
+    // Turns Killed into an integer id.
+    private static readonly int Killed = Animator.StringToHash("Killed");
+    
+    // Turns Primary into an integer id.
+    protected static readonly int Primary = Animator.StringToHash("Primary");
+
+    
     // Called once creature is instantiated.
     private void Awake()
     {
@@ -106,6 +116,7 @@ public partial class Creature : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player");
         
         var lvl = Player.Level;
+        // Logic of their stats. 
         maxHealth *= lvl;
         _health = maxHealth;
         def *= lvl;
@@ -114,37 +125,26 @@ public partial class Creature : MonoBehaviour
         TimeDuringAttacks = new WaitForSeconds(attackDelay);
         
         Stationary = transform.GetChild(0).gameObject;
+        
         if (transform.childCount > 1)
         {
             Projectile = transform.GetChild(1).gameObject;
-            // file:///C:/Program%20Files/Unity/Hub/Editor/2022.3.19f1/Editor/Data/Documentation/en/ScriptReference/GameObject.TryGetComponent.html
             if (Projectile.TryGetComponent(out Projectile p))
-            {
-                p.ParentObject = gameObject;
-                _projectileClass = new Lazy<Projectile>(p);
-
-            }
+                _projectileType = p.ProjectileType;
             StartCoroutine(RunAttacks());
         }
 
         _sfx = gameObject.GetComponents<AudioSource>();
-        Init();
     }
-    
-    // bosses override
-    protected virtual void Init()
-    {}
 
+    // Called on first frame
     private void Start()
     {
         RenderAbilities();   
     }
 
-    // bosses override
-    protected virtual void RenderAbilities()
-    { }
-    // TODO (Death does not match with animation.)
-    // Destroys itself.
+    // No use in Creature, its the boss' functionality.
+    protected virtual void RenderAbilities() {}
 
     /// <summary>
     /// Inflicts damage to the creature.
@@ -154,50 +154,33 @@ public partial class Creature : MonoBehaviour
     {
         Animator.SetTrigger(Hit);
         _sfx[0].Play();
-        // TODO (Keep this for melee weapons)
-        // Move this logic to the Melee class
         _health -= (dmg - dmg * (1 / def));
-        // Mace / Melee class
         
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
-        HandleAudioSfx();
-        // Skips the logic of the creature to prevent
-        // further issues
+        // Make creature stop moving once player is dead.
         if (_player.IsUnityNull())
             Animator.SetFloat(Speed, 0f);
         else
             Move();
         
-        // creature death 
-        // TODO if health <= 0, this dies, set to death animation
-        if (_health <= 0)
-        {
-            Animator.SetTrigger(Killed);
-            
-            Animator.ResetTrigger(Hit);
-        }
-            
+        // When Death.
+        if (_health > 0) return;
+        Animator.SetTrigger(Killed);
+        Animator.ResetTrigger(Hit);
+
     }
 
-    private void HandleAudioSfx()
-    {
-        if (!Animator.GetBool(Primary)) return;
-        if (_sfx.Length > 1)
-            _sfx[1].Play();
-    }
-
+    // Perform Move.
     private void Move()
     {
         // calculates the direction
-        // create a class or another collider for range
         Vector2 curr = transform.position;
         Vector2 playerPosition = _player.transform.position;
-        float distance = Vector2.Distance(curr, playerPosition);
+        var distance = Vector2.Distance(curr, playerPosition);
         _direction = playerPosition - curr;
         _direction.Normalize();
         
@@ -215,29 +198,45 @@ public partial class Creature : MonoBehaviour
             _isProjectileLoopActive = false;
             Animator.SetFloat(Speed, 0f);
         }
+        
+        // If the distance is less than 3, attack player.
+        if (!(distance < 3)) return;
+        if (!_attackDelayChecker)
+            StartCoroutine(Attack());
+
     }
 
+    // Its logic is highly changed in bosses when they are in their ultimate ability state.
     protected virtual bool ShouldStop()
     {
         return false;
     }
+    
     // Is called uncommonly in a series of frames. (Not to be confused with Update, that runs once per frame)
     void FixedUpdate()
     {
 // -------------------------------------------------------------------------------------------------------------------- (3)
         // Change the direction ( Flip the sprite )
-
         var localScale = transform.localScale;
         Vector2 scale = localScale;
         // that is a very interesting way of doing switch. Thanks Rider IDE.
+        
         localScale = _direction.x switch
         {
-            // Flip image
-            < 0 => new Vector2(-Math.Abs(scale.x), scale.y),
-            > 0 => new Vector2(Math.Abs(scale.x), scale.y),
+            // Flip Scale
+            < 0 => Utility.GetInverseScale(scale, -1),
+            > 0 => Utility.GetInverseScale(scale, 1),
             _ => localScale
         };
         transform.localScale = localScale;
     }
-    
+
+    // Perform Attack then delay.
+    private IEnumerator Attack()
+    {
+        _attackDelayChecker = true;
+        Animator.SetTrigger(Primary);
+        yield return new WaitForSeconds(0.5f);
+        _attackDelayChecker = false;
+    }
 }
